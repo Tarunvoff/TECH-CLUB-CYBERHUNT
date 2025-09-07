@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 404 - Page Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle static/glitch background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle, transparent 20%, rgba(255,255,255,0.005) 21%, rgba(255,255,255,0.005) 34%, transparent 35%, transparent),
+                linear-gradient(0deg, transparent 24%, rgba(255,255,255,0.01) 25%, rgba(255,255,255,0.01) 26%, transparent 27%, transparent 74%, rgba(255,255,255,0.01) 75%, rgba(255,255,255,0.01) 76%, transparent 77%, transparent);
+            z-index: -1;
+            animation: staticNoise 0.2s infinite;
+        }
+
+        @keyframes staticNoise {
+            0% { opacity: 0.02; }
+            50% { opacity: 0.05; }
+            100% { opacity: 0.02; }
+        }
+
+        /* Hidden content that's barely visible */
+        .hidden-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.005;
+            font-size: 0.1px;
+            color: rgba(255, 255, 255, 0.001);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Fake error message that appears briefly */
+        .fake-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            animation: errorFlash 5s ease-in-out;
+        }
+
+        @keyframes errorFlash {
+            0% { opacity: 0; }
+            10% { opacity: 0.3; }
+            15% { opacity: 0; }
+            20% { opacity: 0.2; }
+            25% { opacity: 0; }
+            30% { opacity: 0.1; }
+            35% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .error-code {
+            font-size: 4em;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Cursor that blinks occasionally */
+        .cursor {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 2px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            animation: cursorBlink 3s infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 95% { opacity: 0; }
+            96%, 99% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+
+        /* Hidden progress tracker */
+        .progress-tracker {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            z-index: 100;
+            opacity: 0.05;
+        }
+
+        .progress-item {
+            margin: 3px 0;
+            opacity: 0.3;
+            font-size: 0.7em;
+        }
+
+        .progress-item.completed {
+            opacity: 0.5;
+            color: rgba(0, 255, 65, 0.5);
+        }
+
+        .progress-item.current {
+            opacity: 0.7;
+            color: rgba(254, 202, 87, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    
+    <div class="progress-tracker">
+        <div class="progress-item completed">✅ Clue 1: Cryptic Origins</div>
+        <div class="progress-item completed">✅ Clue 2: Hidden in Plain Sight</div>
+        <div class="progress-item current">🔄 Clue 3: The Broken Page</div>
+        <div class="progress-item">⏳ Clue 4: The QR Trap</div>
+        <div class="progress-item">⏳ Clue 5: The Scrambled Key</div>
+        <div class="progress-item">⏳ Final: The Treasure Room</div>
+    </div>
+
+    <div class="fake-error">
+        <div class="error-code">404</div>
+        <div class="error-message">Page Not Found</div>
+    </div>
+
+    <div class="hidden-content">
+        TECH TREASURE HUNT - LEVEL 3: THE BROKEN PAGE
+        Sometimes what appears broken is actually perfectly designed...
+        The console holds the key to your next destination...
+        Look deeper into the void...
+    </div>
+
+    <script>
+        // Main console message that reveals the next clue
+        function revealConsoleClue() {
+            console.clear();
+            
+            // ASCII Art Header
+            console.log('%c', 'font-size: 1px;');
+            console.log('%c██████╗ ██████╗  ██████╗ ██╗  ██╗███████╗███╗   ██╗', 'color: #ff0066; font-family: monospace;');
+            console.log('%c██╔══██╗██╔══██╗██╔═══██╗██║ ██╔╝██╔════╝████╗  ██║', 'color: #ff0066; font-family: monospace;');
+            console.log('%c██████╔╝██████╔╝██║   ██║█████╔╝ █████╗  ██╔██╗ ██║', 'color: #ff0066; font-family: monospace;');
+            console.log('%c██╔══██╗██╔══██╗██║   ██║██╔═██╗ ██╔══╝  ██║╚██╗██║', 'color: #ff0066; font-family: monospace;');
+            console.log('%c██████╔╝██║  ██║╚██████╔╝██║  ██╗███████╗██║ ╚████║', 'color: #ff0066; font-family: monospace;');
+            console.log('%c╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝', 'color: #ff0066; font-family: monospace;');
+            console.log('%c', 'font-size: 1px;');
+            
+            console.log('%c🔥 LEVEL 3: THE BROKEN PAGE - CONSOLE ARCHAEOLOGY 🔥', 'color: #00ff41; font-size: 20px; font-weight: bold;');
+            console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+            console.log('%c🎯 MISSION STATUS: PAGE APPEARS BROKEN, BUT IS IT REALLY?', 'color: #feca57; font-weight: bold;');
+            console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+            
+            setTimeout(() => {
+                console.log('%c🔍 SCANNING FOR HIDDEN PROCESSES...', 'color: #ff6b6b;');
+            }, 1000);
+            
+            setTimeout(() => {
+                console.log('%c💡 ANALYSIS COMPLETE: This page is intentionally "broken"', 'color: #feca57;');
+            }, 2000);
+            
+            setTimeout(() => {
+                console.log('%c🚨 CRITICAL DISCOVERY:', 'color: #ff0066; font-weight: bold;');
+                console.log('%c   Sometimes the most important messages are hidden in plain sight...', 'color: #ff0066;');
+            }, 3000);
+            
+            setTimeout(() => {
+                console.log('%c', 'font-size: 1px;');
+                console.log('%c🎉 CONGRATULATIONS, CONSOLE MASTER! 🎉', 'color: #00ff41; font-size: 18px; font-weight: bold;');
+                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ff41;');
+                console.log('%c🗝️  YOUR NEXT DESTINATION HAS BEEN REVEALED:', 'color: #feca57; font-weight: bold;');
+                console.log('%c', 'font-size: 1px;');
+                console.log('%c    Go to: /matrix/file1.txt', 'color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(0,255,255,0.1); padding: 5px;');
+                console.log('%c', 'font-size: 1px;');
+                console.log('%c⚠️  WARNING: The next level involves QR code scanning...', 'color: #ff6b6b;');
+                console.log('%c🔮 HINT: Prepare your mobile device for "The QR Trap"', 'color: #ff6b6b;');
+                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ff41;');
+            }, 4000);
+            
+            setTimeout(() => {
+                console.log('%c💀 BONUS INTEL: Check network tab for hidden requests...', 'color: #666; font-style: italic;');
+                console.log('%c🎭 EXPERT MODE: This page has 7 hidden elements with opacity < 0.1', 'color: #666; font-style: italic;');
+            }, 6000);
+        }
+
+        // Immediate console activity
+        console.log('%c🔄 LOADING BROKEN PAGE PROTOCOL...', 'color: #888;');
+        
+        // Simulate some loading activity
+        setTimeout(() => {
+            console.log('%c⚠️  ERROR: Page rendering failed...', 'color: #ff6b6b;');
+        }, 500);
+        
+        setTimeout(() => {
+            console.log('%c🔧 ATTEMPTING RECOVERY...', 'color: #feca57;');
+        }, 1000);
+        
+        setTimeout(() => {
+            console.log('%c❌ RECOVERY FAILED: Page remains blank', 'color: #ff4444;');
+        }, 1500);
+        
+        setTimeout(() => {
+            console.log('%c🤔 WAIT... DETECTING CONSOLE ACCESS...', 'color: #00ffff;');
+        }, 2000);
+        
+        // Main reveal after 3 seconds
+        setTimeout(revealConsoleClue, 3000);
+
+        // Hidden functionality - detect various developer actions
+        let developerActions = {
+            consoleOpened: false,
+            inspectElementUsed: false,
+            networkTabViewed: false,
+            sourceViewed: false
+        };
+
+        // Detect console usage
+        let consoleDetected = false;
+        const originalLog = console.log;
+        console.log = function(...args) {
+            if (!consoleDetected) {
+                consoleDetected = true;
+                setTimeout(() => {
+                    console.log('%c🎯 CONSOLE INTERACTION DETECTED!', 'color: #00ff41; font-weight: bold;');
+                    console.log('%cYou\'re getting warmer... keep exploring the console!', 'color: #00ff41;');
+                }, 100);
+            }
+            return originalLog.apply(this, args);
+        };
+
+        // Detect right-click (context menu)
+        document.addEventListener('contextmenu', function(e) {
+            if (!developerActions.inspectElementUsed) {
+                developerActions.inspectElementUsed = true;
+                setTimeout(() => {
+                    console.log('%c🔍 INSPECT ELEMENT DETECTED!', 'color: #feca57;');
+                    console.log('%cGood instincts! But the real treasure is in the console messages...', 'color: #feca57;');
+                }, 500);
+            }
+        });
+
+        // Detect keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // F12 detection
+            if (e.key === 'F12') {
+                setTimeout(() => {
+                    console.log('%c⚡ F12 KEYBOARD WARRIOR DETECTED!', 'color: #ff6b6b;');
+                }, 300);
+            }
+            
+            // Ctrl+U detection
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+                setTimeout(() => {
+                    console.log('%c📄 SOURCE CODE VIEWER DETECTED!', 'color: #0066ff;');
+                    console.log('%cThis page source is intentionally minimal. The action is in the console!', 'color: #0066ff;');
+                }, 300);
+            }
+            
+            // Ctrl+Shift+I detection
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+                setTimeout(() => {
+                    console.log('%c🛠️ DEVELOPER TOOLS MASTER!', 'color: #00ffff;');
+                }, 300);
+            }
+        });
+
+        // Fake network requests to make it look more realistic
+        setTimeout(() => {
+            console.log('%c🌐 Making network requests...', 'color: #666;');
+            
+            // Fake fetch that appears in network tab
+            fetch('/fake-api/broken-status', { mode: 'no-cors' }).catch(() => {
+                console.log('%c🚫 Network request failed (this is intentional)', 'color: #888;');
+            });
+        }, 2500);
+
+        // Easter eggs for persistent explorers
+        setTimeout(() => {
+            window.secretMessage = "You found the hidden JavaScript variable! But the console messages have your real clue...";
+            window.nextLevel = "/matrix/file1.txt";
+            window.hint = "QR codes await in the matrix...";
+        }, 5000);
+
+        // Random console messages to keep things interesting
+        const randomMessages = [
+            '👻 Ghost in the machine detected...',
+            '🔮 Page appears empty but spirits linger...',
+            '⚡ Console energy levels: Maximum',
+            '🌟 Hidden elements: 7 found',
+            '🎭 Illusion level: Master tier'
+        ];
+
+        randomMessages.forEach((message, index) => {
+            setTimeout(() => {
+                if (Math.random() > 0.7) { // 30% chance
+                    console.log(`%c${message}`, 'color: #666; font-style: italic;');
+                }
+            }, 8000 + (index * 2000));
+        });
+
+        // Final easter egg for those who wait
+        setTimeout(() => {
+            console.log('%c🏆 PATIENCE ACHIEVEMENT UNLOCKED!', 'color: #gold; font-weight: bold;');
+            console.log('%cYou waited long enough to see this secret message!', 'color: #gold;');
+            console.log('%cRemember: /matrix/file1.txt is your destination!', 'color: #gold;');
+        }, 30000); // After 30 seconds
+    </script>
+</body>
+</html>

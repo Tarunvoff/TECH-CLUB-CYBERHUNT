@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Treasure Hunt - Advanced Challenge</title>
+    <!-- Hidden clue for advanced players -->
+    <!-- Grace Hopper's mathematical legacy: A-0 System, Short Code, Flow-Matic -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a40 50%, #2d1b69 100%);
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Matrix rain effect */
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #00ff41;
+            animation: matrix-fall linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px 0;
+        }
+
+        .title {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff41;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41; }
+            to { text-shadow: 0 0 30px #00ff41, 0 0 40px #00ff41, 0 0 50px #00ff41; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .game-area {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        }
+
+        .clue-box {
+            background: rgba(0, 255, 65, 0.1);
+            border-left: 4px solid #00ff41;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .clue-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .riddle {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .encrypted-text {
+            background: rgba(0, 100, 255, 0.1);
+            border-left: 4px solid #0066ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .cipher-text {
+            background: rgba(255, 255, 0, 0.15);
+            border: 2px dashed #ffff00;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            letter-spacing: 2px;
+            color: #ffff00;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .small-text {
+            font-size: 0.9em;
+            opacity: 0.7;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .answer-section {
+            margin-top: 30px;
+        }
+
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 5px;
+            color: #00ff41;
+            margin-bottom: 20px;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #00cc33, #00ff41);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.4);
+        }
+
+        .hint {
+            margin-top: 20px;
+            font-size: 0.9em;
+            opacity: 0.7;
+            font-style: italic;
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid #ffa500;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .success {
+            background: rgba(0, 255, 65, 0.2);
+            border: 1px solid #00ff41;
+            color: #00ff41;
+        }
+
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+
+        /* Hidden next button */
+        .next-clue-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: transparent;
+            padding: 10px 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            opacity: 0.03;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            display: none;
+        }
+
+        .next-clue-btn:hover {
+            opacity: 0.8;
+            border-color: #00ff41;
+            color: #00ff41;
+            background: rgba(0, 255, 65, 0.1);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        /* Typing animation */
+        .typing {
+            overflow: hidden;
+            border-right: 2px solid #00ff41;
+            white-space: nowrap;
+            animation: typing 4s steps(50, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: #00ff41; }
+        }
+
+        .terminal-prompt {
+            color: #00ff41;
+            margin-bottom: 10px;
+        }
+
+        .terminal-prompt::before {
+            content: "advanced_hunt@cryptographic:~$ ";
+            opacity: 0.8;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🔍 ADVANCED TECH TREASURE HUNT</h1>
+            <p class="subtitle">Decode cryptographic mysteries and historical programming enigmas</p>
+            <div class="terminal-prompt typing">Initiating advanced cryptographic challenge protocol...</div>
+        </div>
+
+        <div class="game-area">
+            <div class="clue-box">
+                <h2 class="clue-title">🔎 Clue 1 – The Cryptic Origins</h2>
+                <div class="riddle">
+                    <div class="encrypted-text">
+                        "In the realm where <strong>Grace</strong> blazed the trail,<br>
+                        Before 'Hello World' could ever prevail,<br>
+                        Born from military might and bureaucratic need,<br>
+                        I carry the name of a mathematical deed.<br><br>
+                        
+                        My acronym speaks of business common lore,<br>
+                        Yet I predate the languages you now adore.<br>
+                        In <strong>CODASYL's</strong> embrace I found my form,<br>
+                        While mainframes ruled before the PC storm.<br><br>
+                        
+                        <span class="cipher-text">RJE UBNF JT: DPNQVUFS CVTJOFTT PSJFOUFE MBOHVBHF</span>
+                        <div class="small-text">📋 Decode the cipher above (ROT-1 shift) to reveal the truth</div>
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <input type="text" class="answer-input" id="answerInput" placeholder="Enter the decoded language name or its acronym..." autocomplete="off">
+                    <button class="submit-btn" onclick="checkAnswer()">🔓 Decrypt & Submit</button>
+                    
+                    <div class="message success" id="successMessage">
+                        🎉 Outstanding! Grace Hopper's legacy decoded. The cipher has revealed the ancient business tongue...
+                    </div>
+                    
+                    <div class="message error" id="errorMessage">
+                        ❌ The cipher remains locked. Shift each letter backwards by one position (R→Q, J→I, E→D...)
+                    </div>
+                    
+                    <button class="next-clue-btn" id="nextClueBtn" onclick="goToNextClue()">
+                        → Advance to Cryptographic Level 2
+                    </button>
+                </div>
+                
+                <div class="hint">
+                    🧩 <strong>Research Required:</strong><br>
+                    • Grace Hopper + Programming History<br>
+                    • CODASYL Conference + Business Languages<br>
+                    • ROT-1 Cipher Decryption (A←B, B←C, C←D...)<br>
+                    🔍 <strong>Pro tip:</strong> Check browser console and page source for additional intel...
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💀 Elite digital archaeologists only! Decode, research, and conquer! 💀</p>
+            <p>This hunt separates the script kiddies from the cyber legends! 🏴‍☠️</p>
+        </div>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン10COBOLGRACEHOPPER';
+            
+            for (let i = 0; i < 60; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                column.style.animationDelay = Math.random() * 2 + 's';
+                
+                let columnText = '';
+                for (let j = 0; j < 25; j++) {
+                    columnText += chars.charAt(Math.floor(Math.random() * chars.length)) + '<br>';
+                }
+                column.innerHTML = columnText;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+
+        // Initialize matrix effect
+        createMatrixRain();
+
+        // Advanced answer checking with multiple validation paths
+        function checkAnswer() {
+            const input = document.getElementById('answerInput');
+            const answer = input.value.trim().toLowerCase();
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            const nextBtn = document.getElementById('nextClueBtn');
+
+            // Multiple correct answer formats
+            const correctAnswers = [
+                'cobol',
+                'computer business oriented language',
+                'computer business-oriented language'
+            ];
+
+            if (correctAnswers.includes(answer)) {
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+                input.style.borderColor = '#00ff41';
+                
+                // Victory console logs
+                console.log('🎊 CIPHER CRACKED! 🎊');
+                console.log('✅ ROT-1 Successfully Decoded:');
+                console.log('   "RJE UBNF JT: DPNQVUFS CVTJOFTT PSJFOUFE MBOHVBHF"');
+                console.log('   ↓ DECODED ↓');
+                console.log('   "THE NAME IS: COMPUTER BUSINESS ORIENTED LANGUAGE"');
+                console.log('🏆 Grace Hopper\'s business language legacy: ' + answer.toUpperCase());
+                console.log('🔓 Level 2 access granted...');
+                
+            } else {
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+                nextBtn.style.display = 'none';
+                input.style.borderColor = '#ff4444';
+                
+                // Enhanced console debugging help
+                console.log('🔐 CIPHER DECRYPTION HELP:');
+                console.log('📚 ROT-1 Cipher Guide:');
+                console.log('   Each letter shifts BACKWARD by 1 position');
+                console.log('   R → Q, J → I, E → D, U → T, etc.');
+                console.log('🔍 Research Topics:');
+                console.log('   • Grace Hopper (1906-1992): "Amazing Grace" of computing');
+                console.log('   • CODASYL: Conference on Data Systems Languages (1959)');
+                console.log('   • Business-oriented programming languages of the 1950s-60s');
+                console.log('💡 The answer is either the acronym or the full decoded name');
+                
+                // Shake animation
+                input.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+            }
+        }
+
+        // Next level transition
+        function goToNextClue() {
+            // Dramatic transition effect
+            document.body.style.transition = 'all 0.8s ease-out';
+            document.body.style.transform = 'scale(0.9)';
+            document.body.style.opacity = '0';
+            
+            setTimeout(() => {
+                alert('🚀 LEVEL 1 COMPLETE!\n\n🔓 Redirecting to "Hidden in Plain Sight" challenge...\n\n💀 Warning: Next level requires HTML inspection skills!\n\n[In production: Redirects to clue2.html]');
+                document.body.style.transform = 'scale(1)';
+                document.body.style.opacity = '1';
+            }, 800);
+        }
+
+        // Enter key submission
+        document.getElementById('answerInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Advanced console welcome message
+        console.log('%c🔥 ADVANCED TECH TREASURE HUNT - CRYPTOGRAPHIC LEVEL 1 🔥', 'color: #00ff41; font-size: 18px; font-weight: bold; text-shadow: 2px 2px 4px #000;');
+        console.log('%c══════════════════════════════════════════════════════════', 'color: #00ff41;');
+        console.log('%c🎯 MISSION: Decode the ROT-1 cipher and identify the ancient business language', 'color: #0066ff; font-weight: bold;');
+        console.log('%c══════════════════════════════════════════════════════════', 'color: #00ff41;');
+        console.log('%c🧩 RESEARCH DATABASE:', 'color: #ffff00; font-weight: bold;');
+        console.log('%c   👑 Grace Hopper: Admiral, mathematician, programming pioneer', 'color: #ffff00;');
+        console.log('%c   🏛️  CODASYL: 1950s committee that standardized business languages', 'color: #ffff00;');
+        console.log('%c   🔐 ROT-1: Caesar cipher with backward shift of 1', 'color: #ffff00;');
+        console.log('%c🎯 TARGET CIPHER: "RJE UBNF JT: DPNQVUFS CVTJOFTT PSJFOUFE MBOHVBHF"', 'color: #ff6600; font-weight: bold;');
+        console.log('%c💀 This console will become your survival tool in later levels...', 'color: #ff0066;');
+        console.log('%c══════════════════════════════════════════════════════════', 'color: #00ff41;');
+    </script>
+</body>
+</html>

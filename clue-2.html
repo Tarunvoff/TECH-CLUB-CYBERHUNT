@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth Lies Between</title>
+    <!-- 
+    ═══════════════════════════════════════════════════════════════
+    🔍 TECH TREASURE HUNT - LEVEL 2: HIDDEN IN PLAIN SIGHT 🔍
+    ═══════════════════════════════════════════════════════════════
+    
+    Well done, cipher breaker! You've proven your cryptographic skills.
+    But now comes a different challenge - the art of digital archaeology.
+    
+    Every website has secrets hidden in its very foundation...
+    Some truths are written in languages only developers can read...
+    
+    Next Clue: /nextlevel.html
+    
+    ═══════════════════════════════════════════════════════════════
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(45deg, #000428 0%, #004e92 50%, #000428 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: #00ffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating code fragments */
+        .code-fragment {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            color: rgba(0, 255, 255, 0.3);
+            font-size: 12px;
+            pointer-events: none;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { 
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { 
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 50px 0;
+        }
+
+        .level-badge {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px #00ffff;
+            animation: pulse 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #00ffff, #0099cc, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .main-content {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #0099cc, #ff6b6b, #feca57);
+            border-radius: 15px;
+            z-index: -1;
+            animation: borderGlow 4s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .challenge-text {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-weight: bold;
+            text-shadow: 0 0 15px #00ffff;
+        }
+
+        .mystery-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed #00ffff;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .mystery-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .inspect-hint {
+            background: rgba(255, 165, 0, 0.1);
+            border: 2px solid #ffa500;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 165, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 165, 0, 0.6); }
+        }
+
+        .inspect-title {
+            font-size: 1.3em;
+            color: #ffa500;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .inspect-instructions {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .tool-list {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 4px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tool-item {
+            margin: 8px 0;
+            font-size: 1.05em;
+        }
+
+        .keyboard-shortcut {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #feca57;
+        }
+
+        .warning-box {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff4444;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .warning-title {
+            color: #ff4444;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress-tracker {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ffff;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            z-index: 100;
+        }
+
+        .progress-item {
+            margin: 5px 0;
+            opacity: 0.5;
+        }
+
+        .progress-item.completed {
+            opacity: 1;
+            color: #00ff41;
+        }
+
+        .progress-item.current {
+            opacity: 1;
+            color: #feca57;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            opacity: 0.7;
+            font-size: 0.95em;
+        }
+
+        /* Hidden success message that appears when they find the comment */
+        .hidden-success {
+            display: none;
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid #00ff41;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+            animation: successReveal 0.5s ease-in-out;
+        }
+
+        @keyframes successReveal {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Glitch effect for dramatic flair */
+        .glitch {
+            position: relative;
+            color: #00ffff;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0% { clip: rect(132px, 9999px, 142px, 0); }
+            100% { clip: rect(21px, 9999px, 82px, 0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            100% { clip: rect(99px, 9999px, 136px, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating code fragments -->
+    <div class="code-fragment" style="left: 10%; animation-duration: 15s; animation-delay: 0s;">&lt;!-- hidden secrets --&gt;</div>
+    <div class="code-fragment" style="left: 80%; animation-duration: 12s; animation-delay: 2s;">/* inspect me */</div>
+    <div class="code-fragment" style="left: 30%; animation-duration: 18s; animation-delay: 4s;">view-source:</div>
+    <div class="code-fragment" style="left: 70%; animation-duration: 14s; animation-delay: 6s;">&lt;meta hidden="true"&gt;</div>
+    <div class="code-fragment" style="left: 20%; animation-duration: 16s; animation-delay: 8s;">F12 = truth</div>
+
+    <div class="progress-tracker">
+        <div class="progress-item completed">✅ Clue 1: Cryptic Origins</div>
+        <div class="progress-item current">🔄 Clue 2: Hidden in Plain Sight</div>
+        <div class="progress-item">⏳ Clue 3: The Broken Page</div>
+        <div class="progress-item">⏳ Clue 4: The QR Trap</div>
+        <div class="progress-item">⏳ Clue 5: The Scrambled Key</div>
+        <div class="progress-item">⏳ Final: The Treasure Room</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="level-badge">Level 2 of 6</div>
+            <h1 class="title glitch" data-text="HIDDEN IN PLAIN SIGHT">HIDDEN IN PLAIN SIGHT</h1>
+            <p class="subtitle">The secrets lie where only developers dare to look...</p>
+        </div>
+
+        <div class="main-content">
+            <div class="challenge-text">
+                "Sometimes the truth lies between the lines."
+            </div>
+
+            <div class="mystery-box">
+                <div class="mystery-text">
+                    🔍 The answer you seek is not visible to the naked eye...<br>
+                    It dwells in the foundation of this very page...<br>
+                    Where HTML whispers its secrets to those who listen...
+                </div>
+            </div>
+
+            <div class="inspect-hint">
+                <div class="inspect-title">🛠️ Digital Archaeology Tools Required</div>
+                <div class="inspect-instructions">
+                    To uncover the hidden pathway, you must peer into the page's source code:
+
+                    <div class="tool-list">
+                        <div class="tool-item">🔧 <strong>Chrome/Edge:</strong> <span class="keyboard-shortcut">Ctrl+U</span> or <span class="keyboard-shortcut">F12</span></div>
+                        <div class="tool-item">🔧 <strong>Firefox:</strong> <span class="keyboard-shortcut">Ctrl+U</span> or <span class="keyboard-shortcut">F12</span></div>
+                        <div class="tool-item">🔧 <strong>Safari:</strong> <span class="keyboard-shortcut">Option+Cmd+U</span></div>
+                        <div class="tool-item">🔧 <strong>Right-click:</strong> "View Page Source" or "Inspect Element"</div>
+                    </div>
+
+                    Look for HTML comments <code>&lt;!-- like this --&gt;</code> that contain your next destination...
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ WARNING: ELITE HACKERS ONLY</div>
+                <div>This challenge separates the script kiddies from the true digital archaeologists. If you can't inspect source code, you don't deserve the treasure!</div>
+            </div>
+
+            <div class="hidden-success" id="successMessage">
+                🎉 <strong>SOURCE CODE MASTER DETECTED!</strong><br>
+                You've found the hidden comment! The path to <code>/nextlevel.html</code> is now revealed!
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💀 The web is full of secrets for those who know where to look... 💀</p>
+            <p>🔍 HTML comments are the ancient scrolls of the internet 🔍</p>
+        </div>
+    </div>
+
+    <script>
+        // Detect when developer tools are opened
+        let devtools = {open: false,orientation: null};
+        const threshold = 160;
+
+        // Check if devtools are open
+        setInterval(function() {
+            if (window.outerHeight - window.innerHeight > threshold || 
+                window.outerWidth - window.innerWidth > threshold) {
+                if (!devtools.open) {
+                    devtools.open = true;
+                    console.log('%c🎯 DEVELOPER DETECTED! 🎯', 'color: #00ff41; font-size: 20px; font-weight: bold;');
+                    console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                    console.log('%c🔍 TECH TREASURE HUNT - LEVEL 2: SOURCE CODE ARCHAEOLOGY', 'color: #feca57; font-size: 16px; font-weight: bold;');
+                    console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                    console.log('%c🎯 MISSION: Find the hidden HTML comment with the next URL', 'color: #ff6b6b;');
+                    console.log('%c💡 HINT: Look in the <head> section for HTML comments...', 'color: #feca57;');
+                    console.log('%c🔧 PRO TIP: Use Ctrl+U to view page source, not just inspect!', 'color: #00ffff;');
+                    console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                    
+                    // Show success message after they open devtools
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'block';
+                    }, 2000);
+                }
+            } else {
+                if (devtools.open) {
+                    devtools.open = false;
+                }
+            }
+        }, 500);
+
+        // Console welcome message for immediate console users
+        console.log('%c🔥 WELCOME TO LEVEL 2: HIDDEN IN PLAIN SIGHT 🔥', 'color: #00ffff; font-size: 18px; font-weight: bold;');
+        console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+        console.log('%c🎯 Your mission: Find the hidden HTML comment with the next URL', 'color: #feca57;');
+        console.log('%c💡 HINT: The secret is in the page source, not the console!', 'color: #feca57;');
+        console.log('%c🔧 Use Ctrl+U (Windows/Linux) or Cmd+Option+U (Mac) to view source', 'color: #00ff41;');
+        console.log('%c🔍 Look for: <!-- Next Clue: /something.html -->', 'color: #ff6b6b;');
+        console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+
+        // Add some floating code fragments dynamically
+        function createFloatingCode() {
+            const fragments = [
+                '<!-- secrets here -->',
+                '/* hidden treasure */',
+                '<meta hidden>',
+                'view-source:',
+                'inspect-element',
+                '// look deeper',
+                '&lt;!-- clue --&gt;'
+            ];
+
+            fragments.forEach((fragment, index) => {
+                setTimeout(() => {
+                    const element = document.createElement('div');
+                    element.className = 'code-fragment';
+                    element.textContent = fragment;
+                    element.style.left = Math.random() * 90 + '%';
+                    element.style.animationDuration = (Math.random() * 8 + 10) + 's';
+                    element.style.animationDelay = Math.random() * 3 + 's';
+                    document.body.appendChild(element);
+
+                    // Remove after animation
+                    setTimeout(() => {
+                        element.remove();
+                    }, 15000);
+                }, index * 2000);
+            });
+        }
+
+        // Start creating floating elements
+        createFloatingCode();
+
+        // Repeat every 20 seconds
+        setInterval(createFloatingCode, 20000);
+
+        // Easter egg for those who try to cheat with JavaScript
+        window.nextClueUrl = "Nice try! But you need to find it in the HTML source, not JavaScript! 😉";
+
+        // Konami code easter egg
+        let konamiCode = [];
+        const targetSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.code);
+            if (konamiCode.length > targetSequence.length) {
+                konamiCode.shift();
+            }
+            if (JSON.stringify(konamiCode) === JSON.stringify(targetSequence)) {
+                console.log('%c🎮 KONAMI CODE ACTIVATED! 🎮', 'color: #ff0066; font-size: 20px; font-weight: bold;');
+                console.log('%cBut this won\'t help you find the HTML comment! 😄', 'color: #ff0066;');
+            }
+        });
+    </script>
+</body>
+</html>
