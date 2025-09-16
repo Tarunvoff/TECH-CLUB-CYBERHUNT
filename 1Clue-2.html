@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Truth Lies Between</title>
+    <!-- 
+    RGlnaXRhbCBBcmNoZW9sb2dpc3RzIE9ubHk6IFlvdSd2ZSBmb3VuZCB0aGUgZmlyc3QgaGludCE=
+    VGhlIG5leHQgcGllY2Ugb2YgdGhlIHB1enpsZSBpcyBoaWRkZW4gaW4gdGhlIENTUy4uLg==
+    TG9vayBmb3IgdGhlICJpbnZpc2libGUtdGV4dCIgY2xhc3MuLi4=
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(45deg, #000428 0%, #004e92 50%, #000428 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            color: #00ffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Hidden puzzle pieces */
+        .invisible-text {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            opacity: 0;
+            font-size: 0;
+            color: transparent;
+        }
+        
+        .invisible-text:before {
+            content: "U2VjcmV0IENvZGU6IERldmVsb3BlcnMgYXJlIHRoZSBrZXlzIHRvIHRoZSBmdXR1cmU=";
+        }
+
+        /* Fake visible element to throw them off */
+        .decoy-element {
+            display: none;
+        }
+
+        .decoy-element:after {
+            content: "VGhpcyBpcyBhIGZha2UgY2x1ZSAtIGtlZXAgbG9va2luZyE=";
+        }
+
+        /* Floating code fragments */
+        .code-fragment {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            color: rgba(0, 255, 255, 0.3);
+            font-size: 12px;
+            pointer-events: none;
+            animation: float linear infinite;
+        }
+
+        @keyframes float {
+            0% { 
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { 
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 50px 0;
+        }
+
+        .level-badge {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px #00ffff;
+            animation: pulse 3s ease-in-out infinite;
+            background: linear-gradient(45deg, #00ffff, #0099cc, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .main-content {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #00ffff;
+            border-radius: 15px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #0099cc, #ff6b6b, #feca57);
+            border-radius: 15px;
+            z-index: -1;
+            animation: borderGlow 4s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .challenge-text {
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-weight: bold;
+            text-shadow: 0 0 15px #00ffff;
+        }
+
+        .mystery-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed #00ffff;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+        .mystery-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .inspect-hint {
+            background: rgba(255, 165, 0, 0.1);
+            border: 2px solid #ffa500;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            animation: hintPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes hintPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 165, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 165, 0, 0.6); }
+        }
+
+        .inspect-title {
+            font-size: 1.3em;
+            color: #ffa500;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .inspect-instructions {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .tool-list {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 4px solid #00ffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tool-item {
+            margin: 8px 0;
+            font-size: 1.05em;
+        }
+
+        .keyboard-shortcut {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #feca57;
+        }
+
+        .warning-box {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid #ff4444;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .warning-title {
+            color: #ff4444;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .progress-tracker {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ffff;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            z-index: 100;
+        }
+
+        .progress-item {
+            margin: 5px 0;
+            opacity: 0.5;
+        }
+
+        .progress-item.completed {
+            opacity: 1;
+            color: #00ff41;
+        }
+
+        .progress-item.current {
+            opacity: 1;
+            color: #feca57;
+            font-weight: bold;
+        }
+
+        /* Hidden layer revelation boxes */
+        .layer-reveal {
+            display: none;
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00ff41;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            animation: layerReveal 0.8s ease-in-out;
+        }
+
+        @keyframes layerReveal {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Final secret input that appears last */
+        .final-unlock {
+            display: none;
+            background: rgba(255, 215, 0, 0.1);
+            border: 3px solid #ffd700;
+            padding: 30px;
+            margin: 30px 0;
+            border-radius: 15px;
+            text-align: center;
+            animation: finalUnlock 1s ease-in-out;
+        }
+
+        @keyframes finalUnlock {
+            0% { opacity: 0; transform: scale(0.8) rotate(-10deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        .final-input {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            margin: 15px;
+            text-align: center;
+            width: 300px;
+        }
+
+        .final-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .final-button {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 15px;
+            text-transform: uppercase;
+        }
+
+        .final-button:hover {
+            background: linear-gradient(45deg, #ffed4e, #ffd700);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            opacity: 0.7;
+            font-size: 0.95em;
+        }
+
+        .glitch {
+            position: relative;
+            color: #00ffff;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0% { clip: rect(132px, 9999px, 142px, 0); }
+            100% { clip: rect(21px, 9999px, 82px, 0); }
+        }
+
+        @keyframes glitch-2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            100% { clip: rect(99px, 9999px, 136px, 0); }
+        }
+
+        /* More hidden elements for advanced users */
+        .data-attribute-hint {
+            opacity: 0.01;
+            font-size: 1px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden Base64 clue that they'll discover later -->
+    <!-- VGhpcmQgaGludDogQ2hlY2sgdGhlIEphdmFTY3JpcHQgY29uc29sZSBmb3IgZmluYWwgcGllY2U= -->
+    
+    <div class="invisible-text">Secret Base64 clue hidden here</div>
+    <div class="decoy-element">Fake clue to confuse you</div>
+    
+    <div class="code-fragment" style="left: 10%; animation-duration: 15s; animation-delay: 0s;">&lt;!-- look deeper --&gt;</div>
+    <div class="code-fragment" style="left: 80%; animation-duration: 12s; animation-delay: 2s;">/* secrets hidden */</div>
+    <div class="code-fragment" style="left: 30%; animation-duration: 18s; animation-delay: 4s;">inspect everything</div>
+    <div class="code-fragment" style="left: 70%; animation-duration: 14s; animation-delay: 6s;">&lt;source hidden&gt;</div>
+    <div class="code-fragment" style="left: 20%; animation-duration: 16s; animation-delay: 8s;">F12 reveals all</div>
+
+    <div class="progress-tracker">
+        <div class="progress-item completed">✅ Clue 1: Cryptic Origins</div>
+        <div class="progress-item current">🔄 Clue 2: Hidden in Plain Sight</div>
+        <div class="progress-item">⏳ Clue 3: The Broken Page</div>
+        <div class="progress-item">⏳ Clue 4: The QR Trap</div>
+        <div class="progress-item">⏳ Clue 5: The Scrambled Key</div>
+        <div class="progress-item">⏳ Final: The Treasure Room</div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="level-badge">Level 2 of 6</div>
+            <h1 class="title glitch" data-text="HIDDEN IN PLAIN SIGHT">HIDDEN IN PLAIN SIGHT</h1>
+            <p class="subtitle">The secrets lie where only developers dare to look...</p>
+        </div>
+
+        <div class="main-content">
+            <div class="challenge-text">
+                "Sometimes the truth lies between the lines."
+            </div>
+
+            <div class="mystery-box">
+                <div class="mystery-text">
+                    🔍 The answer you seek is not visible to the naked eye...<br>
+                    It dwells in the foundation of this very page...<br>
+                    Where HTML whispers its secrets to those who listen...
+                </div>
+            </div>
+
+            <div class="inspect-hint">
+                <div class="inspect-title">🛠️ Digital Archaeology Required</div>
+                <div class="inspect-instructions">
+                    To uncover the hidden pathway, you must peer into the page's source code:
+
+                    <div class="tool-list">
+                        <div class="tool-item">🔧 <strong>Chrome/Edge:</strong> <span class="keyboard-shortcut">Ctrl+U</span> or <span class="keyboard-shortcut">F12</span></div>
+                        <div class="tool-item">🔧 <strong>Firefox:</strong> <span class="keyboard-shortcut">Ctrl+U</span> or <span class="keyboard-shortcut">F12</span></div>
+                        <div class="tool-item">🔧 <strong>Safari:</strong> <span class="keyboard-shortcut">Option+Cmd+U</span></div>
+                        <div class="tool-item">🔧 <strong>Right-click:</strong> "View Page Source" or "Inspect Element"</div>
+                    </div>
+
+                    Look for HTML comments <code>&lt;!-- like this --&gt;</code> that might contain encoded messages...
+                </div>
+            </div>
+
+            <!-- Layer 1 reveal - after finding HTML comments -->
+            <div class="layer-reveal" id="layer1Reveal">
+                <h3 style="color: #00ff41; margin-bottom: 15px;">🎯 LAYER 1 DISCOVERED!</h3>
+                <p style="margin-bottom: 10px;">Excellent! You found the HTML comments with encoded messages.</p>
+                <p style="color: #feca57; font-style: italic;">But wait... there's more hidden in this page. The CSS holds additional secrets...</p>
+            </div>
+
+            <!-- Layer 2 reveal - after inspecting CSS -->
+            <div class="layer-reveal" id="layer2Reveal">
+                <h3 style="color: #00ff41; margin-bottom: 15px;">🎯 LAYER 2 UNCOVERED!</h3>
+                <p style="margin-bottom: 10px;">Impressive! You discovered the hidden CSS content too.</p>
+                <p style="color: #feca57; font-style: italic;">The final piece awaits in the JavaScript console...</p>
+            </div>
+
+            <!-- Layer 3 reveal - after checking console -->
+            <div class="layer-reveal" id="layer3Reveal">
+                <h3 style="color: #00ff41; margin-bottom: 15px;">🎯 LAYER 3 UNLOCKED!</h3>
+                <p style="margin-bottom: 10px;">Outstanding! You've found all three encoded fragments.</p>
+                <p style="color: #ffd700; font-weight: bold;">Now decode them and piece together your destination!</p>
+            </div>
+
+            <!-- Final unlock - appears after all layers found -->
+            <div class="final-unlock" id="finalUnlock">
+                <h3 style="color: #ffd700; margin-bottom: 20px; font-size: 1.5em;">🏆 MASTER DECODER CHALLENGE</h3>
+                <p style="margin-bottom: 15px;">You've discovered all hidden layers! Now prove your skills:</p>
+                <p style="margin-bottom: 20px; color: #feca57;">Decode the Base64 strings and enter the final destination:</p>
+                <input type="text" class="final-input" id="finalInput" placeholder="Enter decoded destination..." maxlength="50">
+                <br>
+                <button class="final-button" onclick="unlockNext()">🚀 Unlock Next Level</button>
+                <div id="finalResult" style="margin-top: 15px; font-weight: bold;"></div>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ WARNING: TRUE HACKERS ONLY</div>
+                <div>This challenge separates the curious from the truly skilled. Every layer must be discovered!</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💀 The web is full of secrets for those who know where to look... 💀</p>
+            <p data-secret="RGV2ZWxvcGVycyBuZXZlciBnaXZlIHVwIQ==" class="data-attribute-hint">🔍 Hidden attributes hold secrets too 🔍</p>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            htmlFound: false,
+            cssFound: false,
+            jsFound: false,
+            layersRevealed: 0
+        };
+
+        // Hidden JavaScript clue (Base64 encoded)
+        const jsClue = "/nextlevel.html";
+        
+        // Detect various exploration methods
+        let explorationDetected = false;
+
+        // Detect console usage
+        const originalLog = console.log;
+        console.log = function(...args) {
+            if (!explorationDetected) {
+                explorationDetected = true;
+                setTimeout(() => {
+                    revealConsoleClue();
+                }, 1000);
+            }
+            return originalLog.apply(this, args);
+        };
+
+        function revealConsoleClue() {
+            if (!gameState.jsFound) {
+                console.log('%c🔍 CONSOLE EXPLORER DETECTED!', 'color: #00ff41; font-size: 16px; font-weight: bold;');
+                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                console.log('%c🎯 You\'ve unlocked the JavaScript layer!', 'color: #feca57; font-weight: bold;');
+                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                console.log('%c🔑 Console Fragment (Base64): ' + jsClue, 'color: #00ff41; background: rgba(0,255,65,0.1); padding: 5px; font-family: monospace;');
+                console.log('%c💡 Decode this along with the other fragments!', 'color: #feca57;');
+                console.log('%c🚨 HINT: Use atob() or an online Base64 decoder', 'color: #ff6b6b;');
+                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
+                
+                gameState.jsFound = true;
+                checkProgress();
+            }
+        }
+
+        // Detect right-click for element inspection
+        document.addEventListener('contextmenu', function(e) {
+            setTimeout(() => {
+                if (!gameState.cssFound) {
+                    console.log('%c🔧 ELEMENT INSPECTOR ACTIVATED!', 'color: #feca57; font-weight: bold;');
+                    console.log('%cLook for CSS classes with "invisible" in their names...', 'color: #feca57;');
+                    gameState.cssFound = true;
+                    checkProgress();
+                }
+            }, 2000);
+        });
+
+        // Detect source viewing
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+                setTimeout(() => {
+                    if (!gameState.htmlFound) {
+                        console.log('%c📄 SOURCE CODE ACCESSED!', 'color: #0066ff; font-weight: bold;');
+                        console.log('%cSearch for HTML comments with Base64 content...', 'color: #0066ff;');
+                        gameState.htmlFound = true;
+                        checkProgress();
+                    }
+                }, 1000);
+            }
+
+            // F12 detection
+            if (e.key === 'F12') {
+                setTimeout(() => {
+                    if (!explorationDetected) {
+                        explorationDetected = true;
+                        revealConsoleClue();
+                    }
+                }, 500);
+            }
+        });
+
+        function checkProgress() {
+            const foundCount = [gameState.htmlFound, gameState.cssFound, gameState.jsFound].filter(Boolean).length;
+            
+            if (foundCount > gameState.layersRevealed) {
+                gameState.layersRevealed = foundCount;
+                
+                if (foundCount === 1) {
+                    document.getElementById('layer1Reveal').style.display = 'block';
+                } else if (foundCount === 2) {
+                    document.getElementById('layer2Reveal').style.display = 'block';
+                } else if (foundCount === 3) {
+                    document.getElementById('layer3Reveal').style.display = 'block';
+                    setTimeout(() => {
+                        document.getElementById('finalUnlock').style.display = 'block';
+                        console.log('%c🏆 ALL LAYERS DISCOVERED! Final challenge unlocked!', 'color: #ffd700; font-weight: bold;');
+                    }, 2000);
+                }
+            }
+        }
+
+        function unlockNext() {
+            const input = document.getElementById('finalInput').value.toLowerCase().trim();
+            const result = document.getElementById('finalResult');
+            
+            // The correct answer is /nextlevel.html (decoded from the Base64 clues)
+            if (input === '/nextlevel.html' || input === 'nextlevel.html' || input === '/nextlevel') {
+                result.innerHTML = '🎉 <span style="color: #00ff41;">PUZZLE SOLVED! Redirecting to next level...</span>';
+                
+                // Success animation
+                document.body.style.animation = 'none';
+                document.body.style.background = 'linear-gradient(45deg, #00ff41, #00cc33)';
+                
+                setTimeout(() => {
+                    console.log('%c🚀 LEVEL 2 COMPLETED! Advancing to Level 3...', 'color: #00ff41; font-size: 20px; font-weight: bold;');
+                    window.location.href = './clue-3.html';
+                }, 3000);
+            } else if (input.includes('nextlevel') || input.includes('next')) {
+                result.innerHTML = '🔸 <span style="color: #feca57;">Very close! Check your path format...</span>';
+            } else if (input.length > 0) {
+                result.innerHTML = '❌ <span style="color: #ff4444;">Incorrect. Make sure you decoded all Base64 fragments!</span>';
+            } else {
+                result.innerHTML = '⚠️ <span style="color: #ffa500;">Please enter the decoded destination path</span>';
+            }
+        }
+
+        // Easter egg helper functions
+        window.decodeBase64 = function(str) {
+            try {
+                return atob(str);
+            } catch(e) {
+                return "Invalid Base64 string - check your input!";
+            }
+        };
+
+        // Auto-progress check for persistent explorers
+        setTimeout(() => {
+            if (gameState.layersRevealed === 0) {
+                console.log('%c💡 HINT: Try viewing the page source (Ctrl+U) or inspecting elements!', 'color: #666; font-style: italic;');
+            }
+        }, 30000); // After 30 seconds
+
+        // Final encouragement for slow discoverers
+        setTimeout(() => {
+            if (gameState.layersRevealed < 3) {
+                console.log('%c🎯 Still searching? Remember: HTML comments, CSS classes, and this console all hold clues!', 'color: #666; font-style: italic;');
+            }
+        }, 60000); // After 1 minute
+    </script>
+</body>
+</html>

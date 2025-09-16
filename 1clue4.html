@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Training Facility</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 2px solid #00ffff;
+        }
+
+        .title {
+            font-size: 2.5em;
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #feca57;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 60%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            margin: 0 auto;
+            border: 1px solid #00ffff;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #00ff41);
+            width: 0%;
+            transition: width 0.8s ease;
+        }
+
+        .puzzle-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .puzzle-card {
+            background: rgba(0, 20, 40, 0.9);
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .puzzle-card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .puzzle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-title {
+            font-size: 1.5em;
+            color: #feca57;
+        }
+
+        .difficulty-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .easy { background: #00ff41; color: #000; }
+        .medium { background: #feca57; color: #000; }
+        .hard { background: #ff6b6b; color: #fff; }
+
+        .puzzle-content {
+            margin: 20px 0;
+        }
+
+        /* Puzzle 1: Pattern Sequence */
+        .color-sequence {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .color-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            border: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .color-box:hover {
+            transform: scale(1.05);
+        }
+
+        .color-box.selected {
+            border-color: #fff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Puzzle 2: Shape Rotation */
+        .shape-puzzle {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .shape-container {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .shape {
+            width: 120px;
+            height: 120px;
+            margin: 10px auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            user-select: none;
+        }
+
+        .shape:hover {
+            transform: scale(1.05);
+        }
+
+        .target-shape {
+            border-color: #feca57;
+            background: rgba(254, 202, 87, 0.1);
+        }
+
+        /* Puzzle 3: Number Grid */
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+
+        /* Memory Grid for Puzzle 4 */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .memory-cell {
+            aspect-ratio: 1;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .memory-cell:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .memory-cell.highlight {
+            background: #feca57;
+            border-color: #feca57;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(254, 202, 87, 0.6);
+        }
+
+        .memory-cell.user-selected {
+            background: rgba(0, 255, 65, 0.3);
+            border-color: #00ff41;
+        }
+
+        .memory-cell.correct {
+            background: rgba(0, 255, 65, 0.5);
+            border-color: #00ff41;
+        }
+
+        .memory-cell.wrong {
+            background: rgba(255, 107, 107, 0.5);
+            border-color: #ff6b6b;
+        }
+
+        .number-cell {
+            aspect-ratio: 1;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #00ffff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .number-cell:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .number-cell.selected {
+            background: rgba(254, 202, 87, 0.3);
+            border-color: #feca57;
+        }
+
+        .number-cell.empty {
+            background: rgba(255, 255, 255, 0.1);
+            border-style: dashed;
+            cursor: pointer;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            margin: 0 10px;
+            background: rgba(0, 100, 200, 0.8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(0, 150, 255, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hint-btn {
+            background: rgba(254, 202, 87, 0.8);
+        }
+
+        .hint-btn:hover {
+            background: rgba(254, 202, 87, 1);
+        }
+
+        .hint-box {
+            background: rgba(254, 202, 87, 0.1);
+            border-left: 4px solid #feca57;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .hint-box.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success-message {
+            background: rgba(0, 255, 65, 0.2);
+            border: 2px solid #00ff41;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #00ff41;
+            font-weight: bold;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .completion-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .completion-content {
+            background: rgba(0, 20, 40, 0.95);
+            border: 3px solid #00ff41;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            animation: bounceIn 0.8s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            color: #00ffff;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #feca57;
+            font-size: 0.9em;
+        }
+
+        .input-field {
+            width: 80px;
+            padding: 8px;
+            margin: 0 10px;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #00ffff;
+            color: #fff;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #feca57;
+            box-shadow: 0 0 10px rgba(254, 202, 87, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .color-sequence {
+                grid-template-columns: repeat(4, 60px);
+            }
+            
+            .color-box {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .shape {
+                width: 80px;
+                height: 80px;
+                font-size: 2em;
+            }
+            
+            .puzzle-container {
+                padding: 0 10px;
+            }
+
+            .title {
+                font-size: 2em;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">🧠 NEURAL NETWORK TRAINING</div>
+        <div class="subtitle">Level 4: Brain Games Challenge</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div style="margin-top: 10px; color: #888;">Challenge <span id="currentChallenge">1</span> of 4</div>
+    </div>
+
+    <div class="puzzle-container">
+        <!-- Puzzle 1: Color Pattern Sequence (Easy-Medium) -->
+        <div class="puzzle-card active" id="puzzle1">
+            <div class="puzzle-header">
+                <div class="puzzle-title">🎨 Pattern Recognition</div>
+                <div class="difficulty-badge easy">EASY-MEDIUM</div>
+            </div>
+            <div class="puzzle-content">
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    <strong>Mission:</strong> Complete the color sequence! Look at the pattern and click the next color that should appear.
+                </p>
+                <p style="color: #feca57; margin-bottom: 20px;">
+                    Current sequence: <span id="sequenceDisplay">RED → BLUE → RED → BLUE → ?</span>
+                </p>
+                <div class="color-sequence" id="colorOptions">
+                    <div class="color-box" style="background: #ff4757;" onclick="selectColor('red')">RED</div>
+                    <div class="color-box" style="background: #3742fa;" onclick="selectColor('blue')">BLUE</div>
+                    <div class="color-box" style="background: #2ed573;" onclick="selectColor('green')">GREEN</div>
+                    <div class="color-box" style="background: #ffa502;" onclick="selectColor('yellow')">YELLOW</div>
+                </div>
+            </div>
+            <div class="hint-box" id="hint1">
+                💡 <strong>Hint:</strong> Look for alternating patterns! What color comes after blue in this sequence?
+            </div>
+            <div class="controls">
+                <button class="btn hint-btn" onclick="showHint(1)">Show Hint</button>
+                <button class="btn" id="submitBtn1" onclick="checkAnswer(1)" disabled>Submit Answer</button>
+            </div>
+            <div class="success-message" id="success1">
+                🎉 Excellent pattern recognition! You identified the alternating sequence correctly!
+            </div>
+        </div>
+
+        <!-- Puzzle 2: Shape Rotation (Medium) -->
+        <div class="puzzle-card" id="puzzle2">
+            <div class="puzzle-header">
+                <div class="puzzle-title">🔄 Spatial Rotation</div>
+                <div class="difficulty-badge medium">MEDIUM</div>
+            </div>
+            <div class="puzzle-content">
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    <strong>Mission:</strong> Rotate the shapes to match the target! Click on shapes to rotate them 90° clockwise.
+                </p>
+                <div class="shape-puzzle">
+                    <div class="shape-container">
+                        <div>Target:</div>
+                        <div class="shape target-shape" id="targetShape">⬆️</div>
+                    </div>
+                    <div class="shape-container">
+                        <div>Rotate this:</div>
+                        <div class="shape" id="rotateShape" onclick="rotateShape()">➡️</div>
+                        <div style="margin-top: 10px; color: #888;">Clicks: <span id="rotationCount">0</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hint-box" id="hint2">
+                💡 <strong>Hint:</strong> Count how many 90° clockwise rotations you need! Right → Down → Left → Up → Right...
+            </div>
+            <div class="controls">
+                <button class="btn hint-btn" onclick="showHint(2)">Show Hint</button>
+                <button class="btn" onclick="resetRotation()">Reset</button>
+                <button class="btn" id="submitBtn2" onclick="checkAnswer(2)" disabled>Submit Answer</button>
+            </div>
+            <div class="success-message" id="success2">
+                🎯 Perfect spatial reasoning! You matched the target orientation!
+            </div>
+        </div>
+
+        <!-- Puzzle 3: Number Logic Grid (Medium-Hard) -->
+        <div class="puzzle-card" id="puzzle3">
+            <div class="puzzle-header">
+                <div class="puzzle-title">🔢 Logic Grid</div>
+                <div class="difficulty-badge medium">MEDIUM</div>
+            </div>
+            <div class="puzzle-content">
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    <strong>Mission:</strong> Find the missing number! Each row follows a mathematical pattern based on multiplication tables.
+                </p>
+                <div class="number-grid" id="numberGrid">
+                    <div class="number-cell">2</div>
+                    <div class="number-cell">4</div>
+                    <div class="number-cell">6</div>
+                    <div class="number-cell">8</div>
+                    <div class="number-cell">3</div>
+                    <div class="number-cell">6</div>
+                    <div class="number-cell">9</div>
+                    <div class="number-cell">12</div>
+                    <div class="number-cell">4</div>
+                    <div class="number-cell">8</div>
+                    <div class="number-cell">12</div>
+                    <div class="number-cell">16</div>
+                    <div class="number-cell">5</div>
+                    <div class="number-cell">10</div>
+                    <div class="number-cell">15</div>
+                    <div class="number-cell empty" onclick="selectNumber()" id="missingCell">?</div>
+                </div>
+                <p style="color: #feca57; margin-top: 20px;">
+                    Click the ? cell and enter the missing number: 
+                    <input type="number" id="numberInput" class="input-field" placeholder="?">
+                </p>
+            </div>
+            <div class="hint-box" id="hint3">
+                💡 <strong>Hint:</strong> Look at each row! Row 1: 2,4,6,8 (×2 table). Row 2: 3,6,9,12 (×3 table). What's the pattern?
+            </div>
+            <div class="controls">
+                <button class="btn hint-btn" onclick="showHint(3)">Show Hint</button>
+                <button class="btn" id="submitBtn3" onclick="checkAnswer(3)" disabled>Submit Answer</button>
+            </div>
+            <div class="success-message" id="success3">
+                🧮 Brilliant logical thinking! You cracked the multiplication table pattern!
+            </div>
+        </div>
+
+        <!-- Puzzle 4: Memory Matrix (HARD) -->
+        <div class="puzzle-card" id="puzzle4">
+            <div class="puzzle-header">
+                <div class="puzzle-title">🧩 Memory Matrix Challenge</div>
+                <div class="difficulty-badge hard">HARD</div>
+            </div>
+            <div class="puzzle-content">
+                <p style="margin-bottom: 20px; line-height: 1.6;">
+                    <strong>Mission:</strong> Memorize the pattern! A sequence of cells will light up briefly. You must recreate the exact sequence in the correct order.
+                </p>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 1.2em; color: #feca57; margin-bottom: 15px;">
+                        Status: <span id="memoryStatus">Ready to Start</span>
+                    </div>
+                    <div style="color: #00ffff; margin-bottom: 20px;">
+                        Sequence Length: <span id="sequenceLength">4</span> cells | Attempts: <span id="attemptsLeft">3</span> remaining
+                    </div>
+                </div>
+                <div class="memory-grid" id="memoryGrid">
+                    <div class="memory-cell" data-index="0"></div>
+                    <div class="memory-cell" data-index="1"></div>
+                    <div class="memory-cell" data-index="2"></div>
+                    <div class="memory-cell" data-index="3"></div>
+                    <div class="memory-cell" data-index="4"></div>
+                    <div class="memory-cell" data-index="5"></div>
+                    <div class="memory-cell" data-index="6"></div>
+                    <div class="memory-cell" data-index="7"></div>
+                    <div class="memory-cell" data-index="8"></div>
+                </div>
+                <div style="margin: 20px 0; color: #888;">
+                    Your sequence: <span id="userSequence" style="color: #00ffff;">[]</span>
+                </div>
+            </div>
+            <div class="hint-box" id="hint4">
+                💡 <strong>Hint:</strong> Focus on one cell at a time! Try to create a story or pattern in your mind. Top row = 1,2,3 | Middle = 4,5,6 | Bottom = 7,8,9
+            </div>
+            <div class="controls">
+                <button class="btn" id="startMemoryBtn" onclick="startMemorySequence()">START SEQUENCE</button>
+                <button class="btn hint-btn" onclick="showHint(4)">Show Hint</button>
+                <button class="btn" onclick="resetMemoryGame()">Reset Game</button>
+                <button class="btn" id="submitBtn4" onclick="checkAnswer(4)" disabled>Submit Sequence</button>
+            </div>
+            <div class="success-message" id="success4">
+                🎯 Incredible memory skills! You've mastered the sequence perfectly!
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Screen -->
+    <div class="completion-screen" id="completionScreen">
+        <div class="completion-content">
+            <h2 style="color: #00ff41; font-size: 2.5em; margin-bottom: 20px;">🏆 BRAIN TRAINING COMPLETE!</h2>
+            <p style="font-size: 1.3em; margin-bottom: 30px;">Congratulations! You've successfully completed all neural network challenges!</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="finalTime">0:00</div>
+                    <div class="stat-label">Completion Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="hintsUsed">0</div>
+                    <div class="stat-label">Hints Used</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="brainScore">100</div>
+                    <div class="stat-label">Brain Score</div>
+                </div>
+            </div>
+            
+            <div style="margin: 30px 0; padding: 20px; background: rgba(0,255,255,0.1); border-radius: 10px;">
+                <h3 style="color: #00ffff; margin-bottom: 15px;">🗝️ LEVEL 4 COMPLETE!</h3>
+                <p style="color: #feca57; font-size: 1.2em; font-weight: bold;">Next Destination: 1clue 5.html</p>
+                <p style="color: #888; margin-top: 10px;">Prepare for the final treasure challenge!</p>
+            </div>
+            
+            <button class="btn" onclick="proceedToNext()" style="font-size: 1.2em; padding: 15px 30px;">
+                🚀 PROCEED TO FINAL LEVEL
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            currentPuzzle: 1,
+            puzzlesSolved: 0,
+            hintsUsed: 0,
+            startTime: Date.now(),
+            selectedColor: null,
+            currentRotation: 1,
+            targetRotation: 0,
+            memorySequence: [],
+            userMemorySequence: [],
+            memoryPhase: 'ready',
+            attemptsLeft: 3
+        };
+
+        // Puzzle 1: Color Pattern
+        function selectColor(color) {
+            gameState.selectedColor = color;
+            document.querySelectorAll('.color-box').forEach(box => {
+                box.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            document.getElementById('submitBtn1').disabled = false;
+        }
+
+        // Puzzle 2: Shape Rotation
+        function rotateShape() {
+            gameState.currentRotation = (gameState.currentRotation + 1) % 4;
+            const arrows = ['⬆️', '➡️', '⬇️', '⬅️'];
+            document.getElementById('rotateShape').textContent = arrows[gameState.currentRotation];
+            const count = parseInt(document.getElementById('rotationCount').textContent) + 1;
+            document.getElementById('rotationCount').textContent = count;
+            document.getElementById('submitBtn2').disabled = gameState.currentRotation !== gameState.targetRotation;
+        }
+
+        function resetRotation() {
+            gameState.currentRotation = 1;
+            document.getElementById('rotateShape').textContent = '➡️';
+            document.getElementById('rotationCount').textContent = '0';
+            document.getElementById('submitBtn2').disabled = true;
+        }
+
+        // Puzzle 3: Number Input
+        function selectNumber() {
+            document.getElementById('numberInput').focus();
+        }
+
+        // Puzzle 4: Memory Matrix
+        function startMemorySequence() {
+            gameState.memoryPhase = 'showing';
+            gameState.userMemorySequence = [];
+            document.getElementById('memoryStatus').textContent = 'Watch the sequence...';
+            document.getElementById('startMemoryBtn').disabled = true;
+            document.getElementById('submitBtn4').disabled = true;
+            document.getElementById('userSequence').textContent = '[]';
+            
+            const cells = document.querySelectorAll('.memory-cell');
+            cells.forEach(cell => {
+                cell.classList.remove('user-selected', 'correct', 'wrong', 'highlight');
+                cell.removeEventListener('click', handleMemoryClick);
+            });
+            
+            // Generate random sequence
+            gameState.memorySequence = [];
+            for (let i = 0; i < 4; i++) {
+                gameState.memorySequence.push(Math.floor(Math.random() * 9));
+            }
+            
+            // Show sequence
+            gameState.memorySequence.forEach((cellIndex, step) => {
+                setTimeout(() => {
+                    const cell = cells[cellIndex];
+                    cell.classList.add('highlight');
+                    
+                    setTimeout(() => {
+                        cell.classList.remove('highlight');
+                        if (step === gameState.memorySequence.length - 1) {
+                            setTimeout(() => {
+                                gameState.memoryPhase = 'input';
+                                document.getElementById('memoryStatus').textContent = 'Now recreate the sequence!';
+                                enableMemoryInput();
+                            }, 500);
+                        }
+                    }, 600);
+                }, (step * 1000) + 500);
+            });
+        }
+
+        function enableMemoryInput() {
+            const cells = document.querySelectorAll('.memory-cell');
+            cells.forEach(cell => {
+                cell.addEventListener('click', handleMemoryClick);
+            });
+        }
+
+        function handleMemoryClick(event) {
+            if (gameState.memoryPhase !== 'input') return;
+            
+            const cellIndex = parseInt(event.target.dataset.index);
+            gameState.userMemorySequence.push(cellIndex);
+            event.target.classList.add('user-selected');
+            
+            document.getElementById('userSequence').textContent = 
+                '[' + gameState.userMemorySequence.map(i => i + 1).join(', ') + ']';
+            
+            if (gameState.userMemorySequence.length === gameState.memorySequence.length) {
+                document.getElementById('submitBtn4').disabled = false;
+                document.getElementById('memoryStatus').textContent = 'Sequence complete! Submit your answer.';
+            }
+        }
+
+        function resetMemoryGame() {
+            gameState.memoryPhase = 'ready';
+            gameState.userMemorySequence = [];
+            gameState.memorySequence = [];
+            document.getElementById('memoryStatus').textContent = 'Ready to Start';
+            document.getElementById('userSequence').textContent = '[]';
+            document.getElementById('startMemoryBtn').disabled = false;
+            document.getElementById('submitBtn4').disabled = true;
+            
+            const cells = document.querySelectorAll('.memory-cell');
+            cells.forEach(cell => {
+                cell.classList.remove('user-selected', 'correct', 'wrong', 'highlight');
+                cell.removeEventListener('click', handleMemoryClick);
+            });
+        }
+
+        // Hint system
+        function showHint(puzzleNum) {
+            document.getElementById(`hint${puzzleNum}`).classList.add('show');
+            gameState.hintsUsed++;
+        }
+
+        // Answer checking
+        function checkAnswer(puzzleNum) {
+            let correct = false;
+            
+            switch(puzzleNum) {
+                case 1:
+                    correct = gameState.selectedColor === 'red';
+                    break;
+                case 2:
+                    correct = gameState.currentRotation === gameState.targetRotation;
+                    break;
+                case 3:
+                    const answer = parseInt(document.getElementById('numberInput').value);
+                    correct = answer === 20;
+                    break;
+                case 4:
+                    correct = gameState.userMemorySequence.length === gameState.memorySequence.length &&
+                             gameState.userMemorySequence.every((val, index) => val === gameState.memorySequence[index]);
+                    
+                    if (!correct && gameState.attemptsLeft > 1) {
+                        gameState.attemptsLeft--;
+                        document.getElementById('attemptsLeft').textContent = gameState.attemptsLeft;
+                        
+                        const cells = document.querySelectorAll('.memory-cell');
+                        gameState.memorySequence.forEach((cellIndex, i) => {
+                            setTimeout(() => {
+                                cells[cellIndex].classList.add('correct');
+                            }, i * 200);
+                        });
+                        
+                        gameState.userMemorySequence.forEach((cellIndex, i) => {
+                            if (cellIndex !== gameState.memorySequence[i]) {
+                                setTimeout(() => {
+                                    cells[cellIndex].classList.add('wrong');
+                                }, i * 200);
+                            }
+                        });
+                        
+                        setTimeout(() => {
+                            document.getElementById('memoryStatus').textContent = `Try again! ${gameState.attemptsLeft} attempts left.`;
+                            resetMemoryGame();
+                        }, 2000);
+                        return;
+                    } else if (!correct && gameState.attemptsLeft <= 1) {
+                        gameState.attemptsLeft = 0;
+                        document.getElementById('attemptsLeft').textContent = '0';
+                        setTimeout(() => {
+                            document.getElementById('memoryStatus').textContent = 'No attempts left! Check the hint for help.';
+                            showHint(4);
+                            gameState.attemptsLeft = 1;
+                            document.getElementById('attemptsLeft').textContent = '1';
+                            resetMemoryGame();
+                        }, 2000);
+                        return;
+                    }
+                    break;
+            }
+            
+            if (correct) {
+                document.getElementById(`success${puzzleNum}`).style.display = 'block';
+                document.getElementById(`submitBtn${puzzleNum}`).disabled = true;
+                gameState.puzzlesSolved++;
+                updateProgress();
+                
+                if (puzzleNum === 4) {
+                    const cells = document.querySelectorAll('.memory-cell');
+                    cells.forEach(cell => {
+                        cell.removeEventListener('click', handleMemoryClick);
+                    });
+                }
+                
+                celebrateSuccess(puzzleNum);
+                
+                setTimeout(() => {
+                    if (gameState.puzzlesSolved < 4) {
+                        nextPuzzle();
+                    } else {
+                        completeChallenges();
+                    }
+                }, 2000);
+            } else {
+                const card = document.getElementById(`puzzle${puzzleNum}`);
+                card.style.animation = 'shake 0.5s ease-in-out';
+                
+                setTimeout(() => {
+                    card.style.animation = 'slideIn 0.6s ease-out';
+                }, 500);
+                
+                if (puzzleNum !== 4 && !document.getElementById(`hint${puzzleNum}`).classList.contains('show')) {
+                    setTimeout(() => showHint(puzzleNum), 1000);
+                }
+            }
+        }
+
+        function nextPuzzle() {
+            document.getElementById(`puzzle${gameState.currentPuzzle}`).classList.remove('active');
+            gameState.currentPuzzle++;
+            document.getElementById(`puzzle${gameState.currentPuzzle}`).classList.add('active');
+            document.getElementById('currentChallenge').textContent = gameState.currentPuzzle;
+        }
+
+        function updateProgress() {
+            const progress = (gameState.puzzlesSolved / 4) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function completeChallenges() {
+            const timeSpent = Math.floor((Date.now() - gameState.startTime) / 1000);
+            const minutes = Math.floor(timeSpent / 60);
+            const seconds = timeSpent % 60;
+            
+            let score = 100;
+            score -= gameState.hintsUsed * 15;
+            score -= Math.max(0, timeSpent - 180) * 0.1;
+            score = Math.max(50, Math.floor(score));
+            
+            document.getElementById('finalTime').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('hintsUsed').textContent = gameState.hintsUsed;
+            document.getElementById('brainScore').textContent = score;
+            
+            document.getElementById('completionScreen').style.display = 'flex';
+        }
+
+        function proceedToNext() {
+            alert('Congratulations! You would now proceed to "1clue 5.html" - the final treasure challenge!');
+            window.location.href = '5th-clue.html';
+        }
+
+        function celebrateSuccess(puzzleNum) {
+            const successMsg = document.getElementById(`success${puzzleNum}`);
+            successMsg.style.display = 'block';
+            successMsg.style.animation = 'bounceIn 0.8s ease';
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57'];
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    createConfetti(colors[Math.floor(Math.random() * colors.length)]);
+                }, i * 100);
+            }
+        }
+
+        function createConfetti(color) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = color;
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.top = '-10px';
+            confetti.style.pointerEvents = 'none';
+            confetti.style.borderRadius = '50%';
+            confetti.style.zIndex = '1000';
+            
+            document.body.appendChild(confetti);
+            
+            const animation = confetti.animate([
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                { transform: `translateY(${window.innerHeight + 20}px) rotate(360deg)`, opacity: 0 }
+            ], {
+                duration: 3000,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+            
+            animation.onfinish = () => {
+                document.body.removeChild(confetti);
+            };
+        }
+
+        function initializeGame() {
+            const numberInput = document.getElementById('numberInput');
+            numberInput.addEventListener('input', function() {
+                const value = parseInt(this.value);
+                document.getElementById('submitBtn3').disabled = !(value && !isNaN(value));
+            });
+
+            numberInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !document.getElementById('submitBtn3').disabled) {
+                    checkAnswer(3);
+                }
+            });
+
+            updateProgress();
+            
+            gameState.targetRotation = Math.floor(Math.random() * 4);
+            const arrows = ['⬆️', '➡️', '⬇️', '⬅️'];
+            document.getElementById('targetShape').textContent = arrows[gameState.targetRotation];
+            
+            gameState.currentRotation = (gameState.targetRotation + Math.floor(Math.random() * 3) + 1) % 4;
+            document.getElementById('rotateShape').textContent = arrows[gameState.currentRotation];
+
+            console.log('Brain Games Level Loaded! Memory sequence issue FIXED!');
+            console.log('All puzzles should now work correctly, including the memory matrix.');
+        }
+
+        window.addEventListener('load', initializeGame);
+    </script>
+</body>
+</html>

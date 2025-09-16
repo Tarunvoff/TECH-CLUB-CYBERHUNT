@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Password Game</title>
+    <!-- Importing a retro-style font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* --- Basic Setup --- */
+        body {
+            background-color: #0d0221;
+            /* Dark blue-purple background */
+            color: #f0f0f0;
+            font-family: 'VT323', monospace;
+            /* Retro pixel font */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* Align to top */
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 1rem;
+            overflow-y: auto;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid #a626a4;
+            box-shadow: 0 0 15px #a626a4, 0 0 30px #a626a4 inset;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* --- Neon Text & Glow Effect --- */
+        .neon-text {
+            font-size: 3.5rem;
+            color: #f4d35e;
+            text-shadow:
+                0 0 5px #f4d35e,
+                0 0 10px #f4d35e,
+                0 0 20px #f4d35e,
+                0 0 40px #ee964b,
+                0 0 80px #ee964b;
+            animation: flicker 1.5s infinite alternate;
+            margin-bottom: 1.5rem;
+        }
+
+        .prompt {
+            font-size: 1.5rem;
+            color: #00f5d4;
+            text-shadow: 0 0 5px #00f5d4, 0 0 10px #00f5d4;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Input Styling --- */
+        .password-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .neon-input {
+            background: transparent;
+            border: 2px solid #00f5d4;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-family: inherit;
+            font-size: 1.5rem;
+            color: #00f5d4;
+            text-align: center;
+            box-shadow: 0 0 8px #00f5d4, 0 0 15px #00f5d4 inset;
+            outline: none;
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+
+        /* --- Rules Styling --- */
+        .rules-container {
+            margin-top: 2rem;
+            text-align: left;
+            font-size: 1.2rem;
+        }
+
+        .rule {
+            background: rgba(13, 2, 33, 0.6);
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            border-radius: 5px;
+            border-left: 4px solid #f95738;
+            /* Accent color */
+            transition: all 0.3s ease;
+        }
+
+        .rule.valid {
+            border-left-color: #00ff7f;
+            /* Neon Green */
+            color: #c3ffc3;
+            text-shadow: 0 0 5px #00ff7f;
+        }
+
+        .rule.invalid {
+            border-left-color: #ff414d;
+            /* Neon Red */
+            color: #ffc3c3;
+            text-shadow: 0 0 5px #ff414d;
+        }
+
+        /* --- Success Message Styling --- */
+        .success-message {
+            font-size: 2rem;
+            color: #00ff7f;
+            text-shadow: 0 0 10px #00ff7f, 0 0 20px #00ff7f, 0 0 30px #00ff7f;
+            margin: 2rem 0;
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* --- Animation --- */
+        @keyframes flicker {
+
+            0%,
+            18%,
+            22%,
+            25%,
+            53%,
+            57%,
+            100% {
+                text-shadow:
+                    0 0 5px #f4d35e,
+                    0 0 10px #f4d35e,
+                    0 0 20px #f4d35e,
+                    0 0 40px #ee964b,
+                    0 0 80px #ee964b;
+            }
+
+            20%,
+            24%,
+            55% {
+                text-shadow: none;
+            }
+        }
+
+        @keyframes pulse {
+            from {
+                text-shadow: 0 0 10px #00ff7f, 0 0 20px #00ff7f, 0 0 30px #00ff7f;
+            }
+            to {
+                text-shadow: 0 0 20px #00ff7f, 0 0 30px #00ff7f, 0 0 40px #00ff7f;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1 class="neon-text">The Password Game</h1>
+        </header>
+        <main>
+            <p class="prompt">Create a Password:</p>
+            <div class="password-container">
+                <input type="text" id="passwordInput" class="neon-input" placeholder="Start typing...">
+            </div>
+
+            <div id="successMessage" class="success-message" style="display: none;">
+                🎉 CONGRATULATIONS! 🎉<br>
+                All rules completed! Redirecting...
+            </div>
+
+            <div id="rules" class="rules-container">
+                <!-- Rules will be dynamically added here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('passwordInput');
+        const rulesContainer = document.getElementById('rules');
+        const successMessage = document.getElementById('successMessage');
+
+        // Helper function to check for prime numbers
+        const isPrime = num => {
+            if (num <= 1) return false;
+            for (let i = 2; i * i <= num; i++) {
+                if (num % i === 0) return false;
+            }
+            return true;
+        };
+
+        // Helper function to calculate the sum of Roman numerals
+        const sumRomanNumerals = str => {
+            const romanMap = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+            const numerals = str.match(/[IVXLCDM]/gi) || [];
+            return numerals.reduce((sum, numeral) => sum + romanMap[numeral.toUpperCase()], 0);
+        };
+
+        const rules = [
+            { text: "Rule 1: Your password must be at least 8 characters long.", validate: val => val.length >= 8 },
+            { text: "Rule 2: Your password must include an uppercase letter.", validate: val => /[A-Z]/.test(val) },
+            { text: "Rule 3: Your password must include a number.", validate: val => /\d/.test(val) },
+            {
+                text: "Rule 4: The numbers in your password must add up to 30.", validate: val => {
+                    const numbers = val.match(/\d/g);
+                    if (!numbers) return false;
+                    return numbers.map(Number).reduce((sum, num) => sum + num, 0) === 30;
+                }
+            },
+            { text: "Rule 5: The length of your password must be a prime number.", validate: val => isPrime(val.length) },
+        ];
+
+        let activeRules = [];
+        let gameCompleted = false;
+
+        function validatePassword() {
+            if (gameCompleted) return;
+            
+            const password = passwordInput.value;
+            let allPreviousRulesValid = true;
+
+            // Update UI for all active rules based on current password
+            activeRules.forEach(rule => {
+                const ruleEl = document.getElementById(rule.id);
+                const isValid = rule.def.validate(password);
+
+                if (isValid) {
+                    ruleEl.classList.add('valid');
+                    ruleEl.classList.remove('invalid');
+                } else {
+                    ruleEl.classList.add('invalid');
+                    ruleEl.classList.remove('valid');
+                    allPreviousRulesValid = false;
+                }
+            });
+
+            // If all current rules are valid and there are more rules to add, introduce the next one
+            if (allPreviousRulesValid && activeRules.length < rules.length) {
+                introduceNewRule();
+            }
+
+            // Check if all rules are completed
+            if (allPreviousRulesValid && activeRules.length === rules.length) {
+                completeGame();
+            }
+        }
+
+        function introduceNewRule() {
+            const ruleIndex = activeRules.length;
+            if (ruleIndex >= rules.length) return; // No more rules
+
+            const ruleDef = rules[ruleIndex];
+            const ruleId = `rule-${ruleIndex}`;
+
+            // Add to active rules
+            activeRules.push({ id: ruleId, def: ruleDef });
+
+            // Create and prepend the new rule element
+            const ruleEl = document.createElement('div');
+            ruleEl.id = ruleId;
+            ruleEl.className = 'rule';
+            ruleEl.textContent = ruleDef.text;
+            rulesContainer.prepend(ruleEl);
+
+            // Immediately validate against the current password
+            validatePassword();
+        }
+
+        function completeGame() {
+            if (gameCompleted) return;
+            
+            gameCompleted = true;
+            
+            // Show success message
+            successMessage.style.display = 'block';
+            
+            // Disable password input
+            passwordInput.disabled = true;
+            passwordInput.style.opacity = '0.5';
+            
+            // Show alert box after a brief delay, then redirect
+            setTimeout(() => {
+                alert('🎉 Congratulations! You have successfully completed The Password Game! 🎉\n\nAll 5 rules have been satisfied. You will now be redirected to the next level.');
+                window.location.href = 'finalclue.html'; // Redirect to the next clue page
+            }, 1000);
+        }
+
+        // Start the game by introducing the first rule
+        introduceNewRule();
+
+        // Add event listener to the password input
+        passwordInput.addEventListener('input', validatePassword);
+    </script>
+
+</body>
+
+</html>

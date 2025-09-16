@@ -20,7 +20,7 @@
             position: relative;
         }
 
-        /* Subtle static/glitch background */
+        /* Subtle static background */
         body::before {
             content: '';
             position: fixed;
@@ -32,7 +32,7 @@
                 radial-gradient(circle, transparent 20%, rgba(255,255,255,0.005) 21%, rgba(255,255,255,0.005) 34%, transparent 35%, transparent),
                 linear-gradient(0deg, transparent 24%, rgba(255,255,255,0.01) 25%, rgba(255,255,255,0.01) 26%, transparent 27%, transparent 74%, rgba(255,255,255,0.01) 75%, rgba(255,255,255,0.01) 76%, transparent 77%, transparent);
             z-index: -1;
-            animation: staticNoise 0.2s infinite;
+            animation: staticNoise 0.5s infinite;
         }
 
         @keyframes staticNoise {
@@ -41,70 +41,7 @@
             100% { opacity: 0.02; }
         }
 
-        /* Hidden content that's barely visible */
-        .hidden-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.005;
-            font-size: 0.1px;
-            color: rgba(255, 255, 255, 0.001);
-            pointer-events: none;
-            user-select: none;
-        }
-
-        /* Fake error message that appears briefly */
-        .fake-error {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            opacity: 0;
-            animation: errorFlash 5s ease-in-out;
-        }
-
-        @keyframes errorFlash {
-            0% { opacity: 0; }
-            10% { opacity: 0.3; }
-            15% { opacity: 0; }
-            20% { opacity: 0.2; }
-            25% { opacity: 0; }
-            30% { opacity: 0.1; }
-            35% { opacity: 0; }
-            100% { opacity: 0; }
-        }
-
-        .error-code {
-            font-size: 4em;
-            color: #444;
-            margin-bottom: 20px;
-        }
-
-        .error-message {
-            font-size: 1.2em;
-            color: #666;
-        }
-
-        /* Cursor that blinks occasionally */
-        .cursor {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 2px;
-            height: 20px;
-            background: rgba(0, 255, 0, 0.1);
-            animation: cursorBlink 3s infinite;
-        }
-
-        @keyframes cursorBlink {
-            0%, 95% { opacity: 0; }
-            96%, 99% { opacity: 0.3; }
-            100% { opacity: 0; }
-        }
-
-        /* Hidden progress tracker */
+        /* Progress tracker */
         .progress-tracker {
             position: fixed;
             top: 20px;
@@ -115,7 +52,12 @@
             border-radius: 5px;
             font-size: 0.8em;
             z-index: 100;
-            opacity: 0.05;
+            opacity: 0.1;
+            transition: opacity 0.3s ease;
+        }
+
+        .progress-tracker:hover {
+            opacity: 0.8;
         }
 
         .progress-item {
@@ -133,18 +75,144 @@
             opacity: 0.7;
             color: rgba(254, 202, 87, 0.7);
         }
+
+        /* Fake error message */
+        .fake-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            animation: errorFlash 8s ease-in-out;
+        }
+
+        @keyframes errorFlash {
+            0% { opacity: 0; }
+            5% { opacity: 0.3; }
+            8% { opacity: 0; }
+            12% { opacity: 0.2; }
+            15% { opacity: 0; }
+            20% { opacity: 0.1; }
+            25% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .error-code {
+            font-size: 4em;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Puzzle interface */
+        .puzzle-interface {
+            position: fixed;
+            bottom: -250px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 20, 40, 0.95);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            width: 450px;
+            text-align: center;
+            transition: bottom 0.5s ease;
+            z-index: 1000;
+        }
+
+        .puzzle-interface.show {
+            bottom: 20px;
+        }
+
+        .puzzle-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            color: #00ffff;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .puzzle-button {
+            padding: 10px 20px;
+            background: rgba(0, 100, 200, 0.8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: background 0.3s ease;
+        }
+
+        .puzzle-button:hover {
+            background: rgba(0, 150, 255, 0.8);
+        }
+
+        .hint-button {
+            padding: 8px 16px;
+            background: rgba(200, 100, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .hint-button:hover {
+            background: rgba(255, 150, 0, 0.8);
+        }
+
+        .cipher-text {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #00ffff;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            font-size: 1.1em;
+        }
+
+        .cursor {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 2px;
+            height: 20px;
+            background: rgba(0, 255, 0, 0.1);
+            animation: cursorBlink 4s infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 90% { opacity: 0; }
+            91%, 95% { opacity: 0.3; }
+            96%, 100% { opacity: 0; }
+        }
+
+        .puzzle-type {
+            color: #feca57;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="cursor"></div>
     
     <div class="progress-tracker">
-        <div class="progress-item completed">✅ Clue 1: Cryptic Origins</div>
-        <div class="progress-item completed">✅ Clue 2: Hidden in Plain Sight</div>
-        <div class="progress-item current">🔄 Clue 3: The Broken Page</div>
-        <div class="progress-item">⏳ Clue 4: The QR Trap</div>
-        <div class="progress-item">⏳ Clue 5: The Scrambled Key</div>
-        <div class="progress-item">⏳ Final: The Treasure Room</div>
+        <div class="progress-item completed">✅ Clue 1: Discovery</div>
+        <div class="progress-item completed">✅ Clue 2: Hidden Path</div>
+        <div class="progress-item current">🔄 Clue 3: Cipher Challenge</div>
+        <div class="progress-item">⏳ Clue 4: Final Stage</div>
+        <div class="progress-item">⏳ Treasure: Victory</div>
     </div>
 
     <div class="fake-error">
@@ -152,186 +220,236 @@
         <div class="error-message">Page Not Found</div>
     </div>
 
-    <div class="hidden-content">
-        TECH TREASURE HUNT - LEVEL 3: THE BROKEN PAGE
-        Sometimes what appears broken is actually perfectly designed...
-        The console holds the key to your next destination...
-        Look deeper into the void...
+    <!-- Puzzle interface -->
+    <div class="puzzle-interface" id="puzzleInterface">
+        <h3 style="color: #00ffff; margin-bottom: 15px;">🔐 CIPHER CHALLENGE</h3>
+        <div id="puzzleContent">
+            <div class="puzzle-type" id="puzzleType">Loading cipher...</div>
+            <div class="cipher-text" id="cipherText">Loading...</div>
+            <input type="text" class="puzzle-input" id="puzzleAnswer" placeholder="Enter decoded message...">
+            <div style="margin-top: 10px;">
+                <button class="puzzle-button" onclick="checkAnswer()">DECODE & SUBMIT</button>
+                <button class="hint-button" onclick="showHint()" id="hintBtn">NEED HINT?</button>
+            </div>
+            <div id="puzzleHint" style="color: #feca57; margin-top: 15px; font-size: 0.9em; line-height: 1.4;"></div>
+        </div>
     </div>
 
     <script>
-        // Main console message that reveals the next clue
-        function revealConsoleClue() {
+        // Moderate difficulty ciphers - challenging but solvable!
+        const puzzles = [
+            {
+                type: "Caesar Cipher (Shift +3)",
+                cipher: "FRGH EUHDNHU",
+                answer: "code breaker",
+                hint: "Hint: Each letter is shifted 3 positions forward in the alphabet. A→D, B→E, C→F, etc.",
+                explanation: "This is a Caesar cipher with a shift of +3. To decode: move each letter 3 positions back in the alphabet."
+            },
+            {
+                type: "Reverse Text",
+                cipher: "desseccus era uoy",
+                answer: "you are successed",
+                hint: "Hint: Try reading the message backwards, from right to left.",
+                explanation: "The text is simply written in reverse order."
+            },
+            {
+                type: "Number to Letters",
+                cipher: "20-18-5-1-19-21-18-5",
+                answer: "treasure",
+                hint: "Hint: Each number represents a letter's position in the alphabet (A=1, B=2, C=3, etc.).",
+                explanation: "Convert each number to its corresponding letter: 20=T, 18=R, 5=E, 1=A, 19=S, 21=U, 18=R, 5=E"
+            },
+            {
+                type: "Simple Substitution",
+                cipher: "ZHOO GRQH",
+                answer: "well done",
+                hint: "Hint: This is another Caesar cipher, but with a different shift. Try shift +3 again!",
+                explanation: "Another Caesar cipher with +3 shift: W→Z, E→H, L→O, L→O, space, D→G, O→R, N→Q, E→H"
+            }
+        ];
+
+        let currentPuzzleIndex = 0;
+        let gameStarted = false;
+        let hintsUsed = 0;
+
+        function startConsoleSequence() {
             console.clear();
             
-            // ASCII Art Header
-            console.log('%c', 'font-size: 1px;');
-            console.log('%c██████╗ ██████╗  ██████╗ ██╗  ██╗███████╗███╗   ██╗', 'color: #ff0066; font-family: monospace;');
-            console.log('%c██╔══██╗██╔══██╗██╔═══██╗██║ ██╔╝██╔════╝████╗  ██║', 'color: #ff0066; font-family: monospace;');
-            console.log('%c██████╔╝██████╔╝██║   ██║█████╔╝ █████╗  ██╔██╗ ██║', 'color: #ff0066; font-family: monospace;');
-            console.log('%c██╔══██╗██╔══██╗██║   ██║██╔═██╗ ██╔══╝  ██║╚██╗██║', 'color: #ff0066; font-family: monospace;');
-            console.log('%c██████╔╝██║  ██║╚██████╔╝██║  ██╗███████╗██║ ╚████║', 'color: #ff0066; font-family: monospace;');
-            console.log('%c╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝', 'color: #ff0066; font-family: monospace;');
-            console.log('%c', 'font-size: 1px;');
-            
-            console.log('%c🔥 LEVEL 3: THE BROKEN PAGE - CONSOLE ARCHAEOLOGY 🔥', 'color: #00ff41; font-size: 20px; font-weight: bold;');
-            console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
-            console.log('%c🎯 MISSION STATUS: PAGE APPEARS BROKEN, BUT IS IT REALLY?', 'color: #feca57; font-weight: bold;');
+            console.log('%c🎮 TREASURE HUNT - LEVEL 3: THE BROKEN PAGE', 'color: #00ff41; font-size: 20px; font-weight: bold;');
             console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ffff;');
             
             setTimeout(() => {
-                console.log('%c🔍 SCANNING FOR HIDDEN PROCESSES...', 'color: #ff6b6b;');
-            }, 1000);
-            
-            setTimeout(() => {
-                console.log('%c💡 ANALYSIS COMPLETE: This page is intentionally "broken"', 'color: #feca57;');
+                console.log('%c🔍 ANALYZING PAGE STATUS...', 'color: #feca57;');
+                console.log('%c   ⚠️  ERROR: Page appears to be broken', 'color: #ff6b6b;');
             }, 2000);
             
             setTimeout(() => {
-                console.log('%c🚨 CRITICAL DISCOVERY:', 'color: #ff0066; font-weight: bold;');
-                console.log('%c   Sometimes the most important messages are hidden in plain sight...', 'color: #ff0066;');
-            }, 3000);
-            
-            setTimeout(() => {
-                console.log('%c', 'font-size: 1px;');
-                console.log('%c🎉 CONGRATULATIONS, CONSOLE MASTER! 🎉', 'color: #00ff41; font-size: 18px; font-weight: bold;');
-                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ff41;');
-                console.log('%c🗝️  YOUR NEXT DESTINATION HAS BEEN REVEALED:', 'color: #feca57; font-weight: bold;');
-                console.log('%c', 'font-size: 1px;');
-                console.log('%c    Go to: /matrix/file1.txt', 'color: #00ffff; font-size: 16px; font-weight: bold; background: rgba(0,255,255,0.1); padding: 5px;');
-                console.log('%c', 'font-size: 1px;');
-                console.log('%c⚠️  WARNING: The next level involves QR code scanning...', 'color: #ff6b6b;');
-                console.log('%c🔮 HINT: Prepare your mobile device for "The QR Trap"', 'color: #ff6b6b;');
-                console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ff41;');
+                console.log('%c🕵️ WAIT... SOMETHING\'S NOT RIGHT...', 'color: #feca57;');
+                console.log('%c   🔍 Running deeper scan...', 'color: #feca57;');
             }, 4000);
             
             setTimeout(() => {
-                console.log('%c💀 BONUS INTEL: Check network tab for hidden requests...', 'color: #666; font-style: italic;');
-                console.log('%c🎭 EXPERT MODE: This page has 7 hidden elements with opacity < 0.1', 'color: #666; font-style: italic;');
+                console.log('%c💡 DISCOVERY: This page is intentionally "broken"!', 'color: #ff6b6b; font-weight: bold;');
+                console.log('%c🎭 It\'s actually a cipher puzzle challenge!', 'color: #ff6b6b;');
             }, 6000);
+            
+            setTimeout(() => {
+                console.log('%c🧩 CIPHER CHALLENGE ACTIVATED!', 'color: #00ff41; font-weight: bold; font-size: 16px;');
+                console.log('%c📍 Look at the bottom of your screen for the puzzle interface!', 'color: #00ff41;');
+                showPuzzleInterface();
+            }, 8000);
         }
 
-        // Immediate console activity
-        console.log('%c🔄 LOADING BROKEN PAGE PROTOCOL...', 'color: #888;');
-        
-        // Simulate some loading activity
-        setTimeout(() => {
-            console.log('%c⚠️  ERROR: Page rendering failed...', 'color: #ff6b6b;');
-        }, 500);
-        
-        setTimeout(() => {
-            console.log('%c🔧 ATTEMPTING RECOVERY...', 'color: #feca57;');
-        }, 1000);
-        
-        setTimeout(() => {
-            console.log('%c❌ RECOVERY FAILED: Page remains blank', 'color: #ff4444;');
-        }, 1500);
-        
-        setTimeout(() => {
-            console.log('%c🤔 WAIT... DETECTING CONSOLE ACCESS...', 'color: #00ffff;');
-        }, 2000);
-        
-        // Main reveal after 3 seconds
-        setTimeout(revealConsoleClue, 3000);
+        function showPuzzleInterface() {
+            const puzzleInterface = document.getElementById('puzzleInterface');
+            puzzleInterface.classList.add('show');
+            loadCurrentPuzzle();
+            gameStarted = true;
+        }
 
-        // Hidden functionality - detect various developer actions
-        let developerActions = {
-            consoleOpened: false,
-            inspectElementUsed: false,
-            networkTabViewed: false,
-            sourceViewed: false
-        };
+        function loadCurrentPuzzle() {
+            const puzzle = puzzles[currentPuzzleIndex];
+            document.getElementById('puzzleType').textContent = puzzle.type;
+            document.getElementById('cipherText').textContent = puzzle.cipher;
+            document.getElementById('puzzleAnswer').value = '';
+            document.getElementById('puzzleHint').textContent = '';
+            document.getElementById('hintBtn').textContent = 'NEED HINT?';
+            
+            console.log('%c🎯 PUZZLE ' + (currentPuzzleIndex + 1) + ' of ' + puzzles.length, 'color: #feca57; font-weight: bold;');
+            console.log('%c🔐 Cipher Type: ' + puzzle.type, 'color: #00ffff;');
+            console.log('%c📝 Encrypted Message: ' + puzzle.cipher, 'color: #00ffff;');
+            console.log('%c💡 ' + puzzle.explanation, 'color: #888;');
+        }
 
-        // Detect console usage
-        let consoleDetected = false;
-        const originalLog = console.log;
-        console.log = function(...args) {
-            if (!consoleDetected) {
-                consoleDetected = true;
-                setTimeout(() => {
-                    console.log('%c🎯 CONSOLE INTERACTION DETECTED!', 'color: #00ff41; font-weight: bold;');
-                    console.log('%cYou\'re getting warmer... keep exploring the console!', 'color: #00ff41;');
-                }, 100);
+        function checkAnswer() {
+            const userAnswer = document.getElementById('puzzleAnswer').value.toLowerCase().trim();
+            const correctAnswer = puzzles[currentPuzzleIndex].answer.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                console.log('%c✅ EXCELLENT! Cipher decoded successfully!', 'color: #00ff41; font-weight: bold; font-size: 16px;');
+                console.log('%c🎉 Correct answer: "' + puzzles[currentPuzzleIndex].answer + '"', 'color: #00ff41;');
+                
+                currentPuzzleIndex++;
+                
+                if (currentPuzzleIndex >= puzzles.length) {
+                    completedAllPuzzles();
+                } else {
+                    setTimeout(() => {
+                        console.log('%c⬆️ Moving to next cipher challenge...', 'color: #00ffff;');
+                        loadCurrentPuzzle();
+                    }, 2000);
+                }
+            } else {
+                console.log('%c❌ Not quite right. The decoded message was: "' + userAnswer + '"', 'color: #ff4444;');
+                console.log('%c🔄 Try again! Use the hint button if you need help.', 'color: #feca57;');
             }
-            return originalLog.apply(this, args);
-        };
+        }
 
-        // Detect right-click (context menu)
+        function showHint() {
+            const hint = puzzles[currentPuzzleIndex].hint;
+            document.getElementById('puzzleHint').textContent = hint;
+            document.getElementById('hintBtn').textContent = 'HINT SHOWN';
+            hintsUsed++;
+            
+            console.log('%c💡 HINT REVEALED: ' + hint, 'color: #feca57; font-style: italic;');
+        }
+
+        function completedAllPuzzles() {
+            console.log('%c', 'font-size: 1px;');
+            console.log('%c🏆 ALL CIPHERS DECODED! MASTER CRYPTOGRAPHER! 🏆', 'color: #00ff41; font-size: 20px; font-weight: bold;');
+            console.log('%c═══════════════════════════════════════════════════════════════', 'color: #00ff41;');
+            console.log('%c🎊 Congratulations on completing the cipher challenge! 🎊', 'color: #00ff41; font-size: 16px;');
+            
+            setTimeout(() => {
+                console.log('%c📊 CHALLENGE STATS:', 'color: #feca57; font-weight: bold;');
+                console.log('%c   • Ciphers Solved: ' + puzzles.length + '/' + puzzles.length, 'color: #feca57;');
+                console.log('%c   • Hints Used: ' + hintsUsed, 'color: #feca57;');
+                console.log('%c   • Skill Level: ' + (hintsUsed === 0 ? 'EXPERT' : hintsUsed <= 2 ? 'ADVANCED' : 'BEGINNER'), 'color: #feca57;');
+            }, 2000);
+            
+            setTimeout(() => {
+                console.log('%c🗝️ LEVEL 3 COMPLETE - NEXT DESTINATION REVEALED!', 'color: #ff6b6b; font-weight: bold; font-size: 16px;');
+                console.log('%c🎯 Navigate to: 1clue 4.html', 'color: #00ffff; font-size: 18px; font-weight: bold;');
+                console.log('%c⚠️ Level 4 Preview: Get ready for the next challenge!', 'color: #ff6b6b;');
+            }, 4000);
+            
+            setTimeout(() => {
+                console.log('%c🚀 Auto-redirecting in 12 seconds...', 'color: #feca57; font-weight: bold;');
+                startRedirectCountdown();
+            }, 6000);
+            
+            // Hide puzzle interface
+            document.getElementById('puzzleInterface').classList.remove('show');
+        }
+
+        function startRedirectCountdown() {
+            let countdown = 12;
+            let redirectCancelled = false;
+            
+            // Allow user to cancel redirect
+            window.cancelRedirect = function() {
+                redirectCancelled = true;
+                console.log('%c🛑 Auto-redirect cancelled! Navigate manually when ready.', 'color: #feca57;');
+                console.log('%c🎯 Remember: Next level is at 1clue 4.html', 'color: #00ffff;');
+            };
+            
+            const countdownInterval = setInterval(() => {
+                if (!redirectCancelled) {
+                    console.log('%c⏰ Redirecting to next level in ' + countdown + ' seconds... (type cancelRedirect() to stop)', 'color: #888;');
+                    countdown--;
+                    
+                    if (countdown < 0) {
+                        clearInterval(countdownInterval);
+                        console.log('%c🌟 REDIRECTING TO LEVEL 4...', 'color: #00ff41; font-weight: bold;');
+                        
+                        // Redirect to next level
+                        setTimeout(() => {
+                            window.location.href = '1clue4.html';
+                        }, 1000);
+                    }
+                } else {
+                    clearInterval(countdownInterval);
+                }
+            }, 1000);
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && gameStarted) {
+                const activeElement = document.activeElement;
+                if (activeElement && activeElement.classList.contains('puzzle-input')) {
+                    checkAnswer();
+                }
+            }
+        });
+
+        // Encourage console usage
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                if (!gameStarted) {
+                    setTimeout(() => {
+                        console.log('%c🎯 Perfect! You opened the developer console!', 'color: #00ff41;');
+                        console.log('%c🎬 The cipher challenge will begin shortly...', 'color: #00ff41;');
+                    }, 500);
+                }
+            }
+        });
+
+        // Right-click detection
         document.addEventListener('contextmenu', function(e) {
-            if (!developerActions.inspectElementUsed) {
-                developerActions.inspectElementUsed = true;
+            if (!gameStarted) {
                 setTimeout(() => {
-                    console.log('%c🔍 INSPECT ELEMENT DETECTED!', 'color: #feca57;');
-                    console.log('%cGood instincts! But the real treasure is in the console messages...', 'color: #feca57;');
+                    console.log('%c🔍 Good detective work! But the real mystery starts in the console...', 'color: #feca57;');
                 }, 500);
             }
         });
 
-        // Detect keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            // F12 detection
-            if (e.key === 'F12') {
-                setTimeout(() => {
-                    console.log('%c⚡ F12 KEYBOARD WARRIOR DETECTED!', 'color: #ff6b6b;');
-                }, 300);
-            }
-            
-            // Ctrl+U detection
-            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
-                setTimeout(() => {
-                    console.log('%c📄 SOURCE CODE VIEWER DETECTED!', 'color: #0066ff;');
-                    console.log('%cThis page source is intentionally minimal. The action is in the console!', 'color: #0066ff;');
-                }, 300);
-            }
-            
-            // Ctrl+Shift+I detection
-            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
-                setTimeout(() => {
-                    console.log('%c🛠️ DEVELOPER TOOLS MASTER!', 'color: #00ffff;');
-                }, 300);
-            }
-        });
-
-        // Fake network requests to make it look more realistic
+        // Initialize
         setTimeout(() => {
-            console.log('%c🌐 Making network requests...', 'color: #666;');
-            
-            // Fake fetch that appears in network tab
-            fetch('/fake-api/broken-status', { mode: 'no-cors' }).catch(() => {
-                console.log('%c🚫 Network request failed (this is intentional)', 'color: #888;');
-            });
-        }, 2500);
+            console.log('%c🎬 Welcome to the Broken Page! Press F12 to open console if needed.', 'color: #888;');
+        }, 1000);
 
-        // Easter eggs for persistent explorers
-        setTimeout(() => {
-            window.secretMessage = "You found the hidden JavaScript variable! But the console messages have your real clue...";
-            window.nextLevel = "/matrix/file1.txt";
-            window.hint = "QR codes await in the matrix...";
-        }, 5000);
-
-        // Random console messages to keep things interesting
-        const randomMessages = [
-            '👻 Ghost in the machine detected...',
-            '🔮 Page appears empty but spirits linger...',
-            '⚡ Console energy levels: Maximum',
-            '🌟 Hidden elements: 7 found',
-            '🎭 Illusion level: Master tier'
-        ];
-
-        randomMessages.forEach((message, index) => {
-            setTimeout(() => {
-                if (Math.random() > 0.7) { // 30% chance
-                    console.log(`%c${message}`, 'color: #666; font-style: italic;');
-                }
-            }, 8000 + (index * 2000));
-        });
-
-        // Final easter egg for those who wait
-        setTimeout(() => {
-            console.log('%c🏆 PATIENCE ACHIEVEMENT UNLOCKED!', 'color: #gold; font-weight: bold;');
-            console.log('%cYou waited long enough to see this secret message!', 'color: #gold;');
-            console.log('%cRemember: /matrix/file1.txt is your destination!', 'color: #gold;');
-        }, 30000); // After 30 seconds
+        setTimeout(startConsoleSequence, 3000);
     </script>
 </body>
 </html>
